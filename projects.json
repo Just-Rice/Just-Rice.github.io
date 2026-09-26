@@ -143,6 +143,23 @@
       "updated": "2026-08-24T13:32:12Z"
     },
     {
+      "repo": "trading-lab",
+      "name": "Trading Lab",
+      "kind": "Tool",
+      "category": "tools",
+      "color": "#4F5BD5",
+      "blurb": "Build a stock-trading robot, tune it on 26 years of real US prices with a hidden exam for overfitting, then run it live on an Alpaca practice account.",
+      "stack": [
+        "Vanilla JS",
+        "GitHub Actions"
+      ],
+      "action": "Open",
+      "image": "img/trading-lab.webp",
+      "live": true,
+      "added": "2026-09-26",
+      "updated": "2026-09-26"
+    },
+    {
       "repo": "about-blank-lab",
       "name": "About:Blank Lab",
       "kind": "Explainer",
