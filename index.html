@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
+<script>document.documentElement.classList.add("fx")</script>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#F4F5F7" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#101317" media="(prefers-color-scheme: dark)">
@@ -129,9 +130,36 @@ footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--rule);
 footer a{font-weight:600;color:var(--ink)}
 footer .right{margin-left:auto}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+
+
+/* Rice grains background */
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+.wrap{position:relative;z-index:1}
+.card,.plain a{background:color-mix(in srgb,var(--surface) 86%,transparent);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+.filters button:not([aria-pressed="true"]){background:color-mix(in srgb,var(--bg) 60%,transparent)}
+
+/* Cards rise in, one after another; the gold dot hops */
+@keyframes rise{from{opacity:0;transform:translateY(22px) scale(.98)}to{opacity:1;transform:none}}
+@keyframes hop{0%,100%{transform:translateY(0)}30%{transform:translateY(-.5em) scale(.9,1.1)}55%{transform:translateY(0) scale(1.2,.8)}75%{transform:translateY(-.12em)}}
+.fx .card,.fx .plain a,.fx header>*{animation:rise .7s cubic-bezier(.2,.7,.3,1) backwards;animation-delay:calc(var(--i,0) * 70ms)}
+.fx h1 .grain{animation:hop .9s .45s cubic-bezier(.3,.7,.3,1) backwards}
+h1:hover .grain{animation:hop .9s cubic-bezier(.3,.7,.3,1)}
+.fx .risen{animation:none}
+header>:nth-child(2){--i:1}header>:nth-child(3){--i:2}header>:nth-child(4){--i:3}
+
+/* Tilt toward the pointer, with a soft shine */
+main{perspective:1000px}
+.card.tilting{transition:transform .08s linear,border-color .18s ease;
+  transform:rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(-4px)}
+.glare{position:absolute;inset:0;z-index:2;pointer-events:none;border-radius:inherit;opacity:0;transition:opacity .25s;
+  background:radial-gradient(420px circle at var(--gx,50%) var(--gy,50%),rgb(255 255 255/.16),transparent 45%)}
+.card.tilting .glare{opacity:1}
+@media (prefers-reduced-motion:reduce){.fx *{animation:none!important}.card.tilting{transform:none}}
 </style>
 </head>
 <body>
+<canvas id="bg" aria-hidden="true"></canvas>
 <div class="wrap">
   <header>
     <p class="eyebrow">just-rice.github.io</p>
@@ -146,10 +174,10 @@ footer .right{margin-left:auto}
 
   <main>
     <!-- build:featured -->
-    <article class="card feature" data-cat="learning" style="--c:#F2B01E">
+    <article class="card feature" data-cat="learning" style="--i:4;--c:#F2B01E">
       <div class="shot"><img src="img/test-prep.webp" alt="Screenshot of Test Prep" width="800" height="500" fetchpriority="high" decoding="async"></div>
       <div class="body">
-        <span class="kind">Featured &middot; Study tool</span>
+        <span class="kind">Latest update &middot; Study tool</span>
         <h3 class="title"><a href="https://just-rice.github.io/test-prep/">Test Prep</a></h3>
         <p>Adaptive practice for the SAT, PSAT, ACT and MCAT: a placement test, timed practice tests in each exam&#x27;s real format, mistake review and a daily study plan.</p>
         <ul class="stack"><li>Vanilla JS</li><li>No build step</li></ul>
@@ -168,7 +196,7 @@ footer .right{margin-left:auto}
       <!-- /build:filters --></div>
     </div>
     <div class="grid" id="grid"><!-- build:grid -->
-      <article class="card" data-cat="learning" style="--c:#1C94A3">
+      <article class="card" data-cat="learning" style="--i:5;--c:#1C94A3">
         <div class="shot"><img src="img/about-blank-lab.webp" alt="Screenshot of About:Blank Lab" width="800" height="500" loading="lazy" decoding="async"></div>
         <div class="body">
           <span class="kind">Explainer</span>
@@ -178,7 +206,7 @@ footer .right{margin-left:auto}
           <p class="foot"><span class="open">Open <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-09-25">Updated Sep 2026</time><a class="code" href="https://github.com/Just-Rice/about-blank-lab">Code</a></p>
         </div>
       </article>
-      <article class="card" data-cat="games" style="--c:#E2603A">
+      <article class="card" data-cat="games" style="--i:6;--c:#E2603A">
         <div class="shot"><img src="img/megabonk.webp" alt="Screenshot of MEGABONK" width="800" height="500" loading="lazy" decoding="async"></div>
         <div class="body">
           <span class="kind">Game</span>
@@ -188,7 +216,7 @@ footer .right{margin-left:auto}
           <p class="foot"><span class="open">Play <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-09-08">Updated Sep 2026</time><a class="code" href="https://github.com/Just-Rice/megabonk">Code</a></p>
         </div>
       </article>
-      <article class="card" data-cat="games" style="--c:#2F8A5B">
+      <article class="card" data-cat="games" style="--i:7;--c:#2F8A5B">
         <div class="shot"><img src="img/monopolyish.webp" alt="Screenshot of Monopolyish" width="800" height="500" loading="lazy" decoding="async"></div>
         <div class="body">
           <span class="kind">Game</span>
@@ -198,7 +226,7 @@ footer .right{margin-left:auto}
           <p class="foot"><span class="open">Play <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-09-01">Updated Sep 2026</time><a class="code" href="https://github.com/Just-Rice/Monopolyish">Code</a></p>
         </div>
       </article>
-      <article class="card" data-cat="games" style="--c:#B4682A">
+      <article class="card" data-cat="games" style="--i:8;--c:#B4682A">
         <div class="shot"><img src="img/chowka-bhara.webp" alt="Screenshot of Chowka-Bhara" width="800" height="500" loading="lazy" decoding="async"></div>
         <div class="body">
           <span class="kind">Game</span>
@@ -208,17 +236,7 @@ footer .right{margin-left:auto}
           <p class="foot"><span class="open">Play <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-24">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/Chowka-Bhara">Code</a></p>
         </div>
       </article>
-      <article class="card" data-cat="tools" style="--c:#7C5CD6">
-        <div class="shot"><img src="img/groundish-news.webp" alt="Screenshot of Groundish News" width="800" height="500" loading="lazy" decoding="async"></div>
-        <div class="body">
-          <span class="kind">News</span>
-          <h3 class="title"><a href="https://just-rice.github.io/groundish-news/">Groundish News</a></h3>
-          <p>A news reader that shows every side of a story: the same event across 66 outlets, how each side headlined it, and what one side isn&#x27;t covering.</p>
-          <ul class="stack"><li>Python</li><li>Vanilla JS</li></ul>
-          <p class="foot"><span class="open">Read <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-24">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/groundish-news">Code</a></p>
-        </div>
-      </article>
-      <article class="card" data-cat="tools" style="--c:#4E9B5B">
+      <article class="card" data-cat="tools" style="--i:9;--c:#4E9B5B">
         <div class="shot"><img src="img/food-is-medicine.webp" alt="Screenshot of Food is Medicine" width="800" height="500" loading="lazy" decoding="async"></div>
         <div class="body">
           <span class="kind">Data</span>
@@ -228,7 +246,7 @@ footer .right{margin-left:auto}
           <p class="foot"><span class="open">Open <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-24">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/food-is-medicine">Code</a></p>
         </div>
       </article>
-      <article class="card" data-cat="tools" style="--c:#2E7FE8">
+      <article class="card" data-cat="tools" style="--i:10;--c:#2E7FE8">
         <div class="shot"><img src="img/subtrackr.webp" alt="Screenshot of Subtrackr" width="800" height="500" loading="lazy" decoding="async"></div>
         <div class="body">
           <span class="kind">Tool</span>
@@ -238,7 +256,17 @@ footer .right{margin-left:auto}
           <p class="foot"><span class="open">Open <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-24">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/subtrackr">Code</a></p>
         </div>
       </article>
-      <article class="card" data-cat="games" style="--c:#D94F8A">
+      <article class="card" data-cat="tools" style="--i:11;--c:#7C5CD6">
+        <div class="shot"><img src="img/groundish-news.webp" alt="Screenshot of Groundish News" width="800" height="500" loading="lazy" decoding="async"></div>
+        <div class="body">
+          <span class="kind">News</span>
+          <h3 class="title"><a href="https://just-rice.github.io/groundish-news/">Groundish News</a></h3>
+          <p>A news reader that shows every side of a story: the same event across 66 outlets, how each side headlined it, and what one side isn&#x27;t covering.</p>
+          <ul class="stack"><li>Python</li><li>Vanilla JS</li></ul>
+          <p class="foot"><span class="open">Read <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-24">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/groundish-news">Code</a></p>
+        </div>
+      </article>
+      <article class="card" data-cat="games" style="--i:12;--c:#D94F8A">
         <div class="shot"><img src="img/gamehub.webp" alt="Screenshot of GameHub" width="800" height="500" loading="lazy" decoding="async"></div>
         <div class="body">
           <span class="kind">Games</span>
@@ -252,7 +280,7 @@ footer .right{margin-left:auto}
 
     <h2 class="section">Also in the workshop</h2>
     <div class="plain"><!-- build:workshop -->
-      <a href="https://github.com/Just-Rice/traceline"><strong>traceline</strong><span>A synthetic-data study of the people-search genre. No scraping, no backend, nobody real. Code only.</span></a>
+      <a style="--i:13" href="https://github.com/Just-Rice/traceline"><strong>traceline</strong><span>A synthetic-data study of the people-search genre. No scraping, no backend, nobody real. Code only.</span></a>
     <!-- /build:workshop --></div>
 
     <h2 class="section">How these are made</h2>
@@ -277,6 +305,99 @@ document.querySelector(".filters").addEventListener("click", e => {
   for (const b of e.currentTarget.children) b.setAttribute("aria-pressed", b === btn);
   for (const c of document.querySelectorAll("#grid .card")) c.hidden = f !== "all" && c.dataset.cat !== f;
 });
+</script>
+<script>
+(() => {
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+const darkQ = matchMedia("(prefers-color-scheme: dark)");
+const dark = () => { const t = document.documentElement.dataset.theme; return t ? t === "dark" : darkQ.matches; };
+
+// ---- Rice grains ----
+const cv = document.getElementById("bg"), ctx = cv.getContext("2d");
+let W, H, grains = [], mouse = {x: -9999, y: -9999}, raf = 0;
+const rnd = (a, b) => a + Math.random() * (b - a);
+let lastSy = scrollY;
+function resize(){
+  const dpr = Math.min(devicePixelRatio || 1, 2);
+  W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  grains = Array.from({length: Math.round(W * H / 16000)}, () => ({x: rnd(0, W), y: rnd(0, H), z: rnd(.5, 1),
+    a: rnd(0, 6.28), va: rnd(-.01, .01), sw: rnd(0, 6.28), vx: 0, vy: 0}));
+  draw();
+}
+// Grains live in screen coordinates: x and y are exactly where each one is drawn,
+// so the pointer test and the drawing always agree, right up to the edges.
+function draw(){
+  const sy = scrollY, ds = sy - lastSy; lastSy = sy;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = dark() ? "#EDE6D3" : "#BFAE80";
+  for (const g of grains){
+    g.y -= ds * .3 * g.z;                       // parallax: nearer grains move more when you scroll
+    if (!reduce){
+      g.y += .35 * g.z; g.sw += .01; g.a += g.va;
+      const dx = g.x - mouse.x, dy = g.y - mouse.y, d2 = dx * dx + dy * dy;
+      if (d2 < 14000){ const d = Math.sqrt(d2) || 1, f = (1 - d2 / 14000) * 1.4; g.vx += dx / d * f; g.vy += dy / d * f; }
+      g.x += g.vx + Math.sin(g.sw) * .25; g.y += g.vy; g.vx *= .92; g.vy *= .92;
+    }
+    if (g.y > H + 20) g.y -= H + 40; else if (g.y < -20) g.y += H + 40;
+    if (g.x > W + 10) g.x -= W + 20; else if (g.x < -10) g.x += W + 20;
+    ctx.globalAlpha = .5 * g.z;
+    ctx.save(); ctx.translate(g.x, g.y); ctx.rotate(g.a);
+    ctx.beginPath(); ctx.ellipse(0, 0, 2.6 * g.z + 1, 6 * g.z + 2, 0, 0, 7); ctx.fill(); ctx.restore();
+  }
+  ctx.globalAlpha = 1;
+}
+function loop(){ draw(); raf = requestAnimationFrame(loop); }
+addEventListener("resize", resize);
+addEventListener("pointermove", e => { mouse.x = e.clientX; mouse.y = e.clientY; });
+const away = () => { mouse.x = mouse.y = -9999; };
+document.addEventListener("pointerleave", away);
+addEventListener("pointerup", e => { if (e.pointerType !== "mouse") away(); });
+addEventListener("blur", away);
+darkQ.addEventListener("change", draw);
+if (reduce) addEventListener("scroll", draw, {passive: true});
+document.addEventListener("visibilitychange", () => { cancelAnimationFrame(raf); raf = 0; if (!document.hidden && !reduce) loop(); });
+resize(); if (!reduce) loop();
+
+// ---- Cards rise in ----
+// Each element plays its entrance once. Once it has finished (or a filter is used), mark it
+// done, so a card that a filter hides and brings back doesn't replay the entrance.
+document.addEventListener("animationend", e => { if (e.animationName === "rise") e.target.classList.add("risen"); });
+document.querySelector(".filters").addEventListener("click", () => {
+  for (const el of document.querySelectorAll(".card, .plain a, header>*")) el.classList.add("risen");
+}, true);
+// The .fx class is set in <head> and each card carries its own --i, so the animation starts on the very first paint.
+
+// ---- Tilt on hover (mouse only; phones don't hover) ----
+for (const c of document.querySelectorAll(".card")){
+  const g = document.createElement("span"); g.className = "glare"; c.appendChild(g);
+  c.addEventListener("pointermove", e => {
+    if (reduce || e.pointerType !== "mouse") return;
+    const r = c.getBoundingClientRect(), px = (e.clientX - r.left) / r.width, py = (e.clientY - r.top) / r.height;
+    const k = c.classList.contains("feature") ? 3 : 7;
+    c.style.setProperty("--ry", ((px - .5) * k * 2).toFixed(2) + "deg");
+    c.style.setProperty("--rx", ((.5 - py) * k * 2).toFixed(2) + "deg");
+    c.style.setProperty("--gx", (px * 100).toFixed(1) + "%"); c.style.setProperty("--gy", (py * 100).toFixed(1) + "%");
+    c.classList.add("tilting");
+  });
+  c.addEventListener("pointerleave", () => c.classList.remove("tilting"));
+}
+
+// ---- Filter shuffle: cards glide to their new places ----
+document.querySelector(".filters").addEventListener("click", e => {
+  if (reduce || !e.target.closest("button")) return;
+  const cards = [...document.querySelectorAll("#grid .card")];
+  const before = new Map(cards.map(c => [c, c.hidden ? null : c.getBoundingClientRect()]));
+  requestAnimationFrame(() => {
+    let n = 0;
+    for (const c of cards){
+      if (c.hidden) continue;
+      const a = before.get(c), b = c.getBoundingClientRect();
+      if (a) c.animate([{transform: `translate(${a.left - b.left}px,${a.top - b.top}px)`}, {transform: "none"}], {duration: 450, easing: "cubic-bezier(.2,.7,.3,1)"});
+      else c.animate([{opacity: 0, transform: "scale(.92)"}, {opacity: 1, transform: "none"}], {duration: 380, delay: 40 * n++, easing: "ease-out", fill: "backwards"});
+    }
+  });
+}, true);
+})();
 </script>
 </body>
 </html>

@@ -58,9 +58,9 @@ def foot(p):
             f'<a class="code" href="{repo_url(p)}">Code</a></p>')
 
 
-def card(p):
+def card(p, i):
     return f"""
-      <article class="card" data-cat="{esc(p.get('category', 'tools'))}" style="--c:{esc(p.get('color', '#6B7480'))}">
+      <article class="card" data-cat="{esc(p.get('category', 'tools'))}" style="--i:{i};--c:{esc(p.get('color', '#6B7480'))}">
         <div class="shot">{picture(p)}</div>
         <div class="body">
           <span class="kind">{esc(p.get('kind', 'Project'))}</span>
@@ -72,12 +72,12 @@ def card(p):
       </article>"""
 
 
-def featured(p):
+def featured(p, i):
     return f"""
-    <article class="card feature" data-cat="{esc(p.get('category', 'tools'))}" style="--c:{esc(p.get('color', '#6B7480'))}">
+    <article class="card feature" data-cat="{esc(p.get('category', 'tools'))}" style="--i:{i};--c:{esc(p.get('color', '#6B7480'))}">
       <div class="shot">{picture(p, eager=True)}</div>
       <div class="body">
-        <span class="kind">Featured &middot; {esc(p.get('kind', 'Project'))}</span>
+        <span class="kind">Latest update &middot; {esc(p.get('kind', 'Project'))}</span>
         <h3 class="title"><a href="{esc(live_url(p))}">{esc(p['name'])}</a></h3>
         <p>{esc(p.get('blurb', ''))}</p>
         <ul class="stack">{chips(p)}</ul>
@@ -86,8 +86,8 @@ def featured(p):
     </article>"""
 
 
-def workshop(p):
-    return (f'\n      <a href="{repo_url(p)}"><strong>{esc(p["name"])}</strong>'
+def workshop(p, i):
+    return (f'\n      <a style="--i:{i}" href="{repo_url(p)}"><strong>{esc(p["name"])}</strong>'
             f'<span>{esc(p.get("blurb", ""))}</span></a>')
 
 
@@ -95,9 +95,12 @@ def build():
     data = json.loads((ROOT / "projects.json").read_text())
     projects = data["projects"]
     live = [p for p in projects if p.get("live", True)]
-    top = next((p for p in live if p.get("featured")), None)
-    rest = sorted((p for p in live if p is not top),
-                  key=lambda p: p.get("updated", ""), reverse=True)
+    # The top card is whichever project was pushed to most recently ("pinned": true overrides).
+    live.sort(key=lambda p: p.get("updated", ""), reverse=True)
+    top = next((p for p in live if p.get("pinned")), live[0] if live else None)
+    rest = [p for p in live if p is not top]
+    shop = [p for p in projects if not p.get("live", True)]
+    # --i staggers the entrance animation; the header's four lines take 0-3.
 
     counts = {k: sum(p.get("category") == k for p in live) for k, _ in CATEGORIES}
     filters = [f'<button type="button" data-filter="all" aria-pressed="true">All <b>{len(live)}</b></button>']
@@ -107,10 +110,10 @@ def build():
     newest = max((p.get("updated", "") for p in projects), default="")
     parts = {
         "count": f"{len(live)} live projects",
-        "featured": featured(top) + "\n    " if top else "",
+        "featured": featured(top, 4) + "\n    " if top else "",
         "filters": "\n      " + "\n      ".join(filters) + "\n      ",
-        "grid": "".join(card(p) for p in rest) + "\n    ",
-        "workshop": "".join(workshop(p) for p in projects if not p.get("live", True)) + "\n    ",
+        "grid": "".join(card(p, 5 + n) for n, p in enumerate(rest)) + "\n    ",
+        "workshop": "".join(workshop(p, 5 + len(rest) + n) for n, p in enumerate(shop)) + "\n    ",
         "updated": (f'<time datetime="{esc(newest[:10])}">{dt.date.fromisoformat(newest[:10]).strftime("%-d %B %Y")}</time>'
                     if newest else ""),
     }

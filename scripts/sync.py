@@ -94,7 +94,7 @@ def sync(dry_run=False):
         if not r:
             changes.append(f"warning: {p['repo']} is not a public repo any more (left as is)")
             continue
-        for key, value in (("added", r["created_at"][:10]), ("updated", r["pushed_at"][:10])):
+        for key, value in (("added", r["created_at"][:10]), ("updated", r["pushed_at"])):
             if p.get(key) != value:
                 changes.append(f"{p['repo']}: {key} {p.get(key)} -> {value}")
                 p[key] = value
@@ -105,7 +105,7 @@ def sync(dry_run=False):
         if name in listed or name in skip or not wanted(r):
             continue
         entry = new_entry(r, used)
-        entry["added"], entry["updated"] = r["created_at"][:10], r["pushed_at"][:10]
+        entry["added"], entry["updated"] = r["created_at"][:10], r["pushed_at"]
         used.add(entry["color"])
         projects.append(entry)
         changes.append(f"added new project: {r['name']}")

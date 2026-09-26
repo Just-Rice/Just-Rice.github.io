@@ -19,10 +19,9 @@
       ],
       "action": "Open",
       "image": "img/test-prep.webp",
-      "featured": true,
       "live": true,
       "added": "2026-09-13",
-      "updated": "2026-09-25"
+      "updated": "2026-09-25T23:52:58Z"
     },
     {
       "repo": "megabonk",
@@ -39,7 +38,7 @@
       "image": "img/megabonk.webp",
       "live": true,
       "added": "2026-09-05",
-      "updated": "2026-09-08"
+      "updated": "2026-09-08T11:19:19Z"
     },
     {
       "repo": "gamehub",
@@ -56,7 +55,7 @@
       "image": "img/gamehub.webp",
       "live": true,
       "added": "2026-08-11",
-      "updated": "2026-08-11"
+      "updated": "2026-08-11T22:34:25Z"
     },
     {
       "repo": "Monopolyish",
@@ -73,7 +72,7 @@
       "image": "img/monopolyish.webp",
       "live": true,
       "added": "2026-08-06",
-      "updated": "2026-09-01"
+      "updated": "2026-09-01T00:33:06Z"
     },
     {
       "repo": "Chowka-Bhara",
@@ -90,7 +89,7 @@
       "image": "img/chowka-bhara.webp",
       "live": true,
       "added": "2026-08-12",
-      "updated": "2026-08-24"
+      "updated": "2026-08-24T23:08:12Z"
     },
     {
       "repo": "groundish-news",
@@ -107,7 +106,7 @@
       "image": "img/groundish-news.webp",
       "live": true,
       "added": "2026-08-22",
-      "updated": "2026-08-24"
+      "updated": "2026-08-24T13:18:31Z"
     },
     {
       "repo": "food-is-medicine",
@@ -124,7 +123,7 @@
       "image": "img/food-is-medicine.webp",
       "live": true,
       "added": "2026-08-22",
-      "updated": "2026-08-24"
+      "updated": "2026-08-24T21:43:50Z"
     },
     {
       "repo": "subtrackr",
@@ -141,7 +140,7 @@
       "image": "img/subtrackr.webp",
       "live": true,
       "added": "2026-08-23",
-      "updated": "2026-08-24"
+      "updated": "2026-08-24T13:32:12Z"
     },
     {
       "repo": "about-blank-lab",
@@ -158,7 +157,7 @@
       "image": "img/about-blank-lab.webp",
       "live": true,
       "added": "2026-09-25",
-      "updated": "2026-09-25"
+      "updated": "2026-09-25T10:37:36Z"
     },
     {
       "repo": "traceline",
@@ -172,7 +171,7 @@
       ],
       "live": false,
       "added": "2026-09-04",
-      "updated": "2026-09-04"
+      "updated": "2026-09-04T02:48:32Z"
     }
   ]
 }
