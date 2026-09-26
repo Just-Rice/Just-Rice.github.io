@@ -3,79 +3,131 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#14171C">
+<meta name="theme-color" content="#F4F5F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#101317" media="(prefers-color-scheme: dark)">
 <title>Just Rice</title>
-<meta name="description" content="Browser games, study tools and data projects by Just Rice. Everything runs in your browser.">
+<meta name="description" content="Browser games, study tools and data projects by Just Rice. Everything runs in your browser, nothing to install, all open source.">
+<link rel="canonical" href="https://just-rice.github.io/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://just-rice.github.io/">
+<meta property="og:title" content="Just Rice">
+<meta property="og:description" content="Browser games, study tools and data projects. Everything runs in your browser, nothing to install.">
+<meta property="og:image" content="https://just-rice.github.io/img/og.png">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%2314171C'/%3E%3Cpath d='M20 44c0-8 5-13 12-13s12 5 12 13z' fill='%23F2B01E'/%3E%3Ccircle cx='32' cy='24' r='5' fill='%23F2B01E'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Source+Sans+3:wght@400;600;700&display=swap">
 <style>
 :root{
-  --bg:#F4F5F7; --surface:#FFFFFF; --ink:#14171C; --muted:#5C6672; --rule:#E1E5EA;
+  --bg:#F4F5F7; --surface:#FFFFFF; --ink:#14171C; --muted:#5C6672; --rule:#E1E5EA; --chip:#EEF0F3;
   --shadow:0 1px 2px rgb(16 24 40/.05), 0 12px 28px -14px rgb(16 24 40/.28);
   --display:"Bricolage Grotesque","Avenir Next",system-ui,sans-serif;
   --body:"Source Sans 3","Segoe UI",system-ui,-apple-system,sans-serif;
   color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root{
-  --bg:#101317; --surface:#181C22; --ink:#E9ECEF; --muted:#98A2AE; --rule:#272D35;
+  --bg:#101317; --surface:#181C22; --ink:#E9ECEF; --muted:#98A2AE; --rule:#272D35; --chip:#20252C;
   --shadow:0 1px 2px rgb(0 0 0/.5), 0 14px 32px -14px rgb(0 0 0/.8);
   color-scheme:dark;
 }}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--body);
   -webkit-font-smoothing:antialiased}
-.wrap{max-width:1060px;margin:0 auto;padding:clamp(40px,7vw,84px) clamp(16px,4vw,32px) 64px}
+.wrap{max-width:1100px;margin:0 auto;padding:clamp(40px,7vw,84px) clamp(16px,4vw,32px) 64px}
 a{color:inherit}
 :focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:6px}
 
+/* Header */
 .eyebrow{margin:0 0 14px;font:600 12.5px/1 var(--body);letter-spacing:.14em;
   text-transform:uppercase;color:var(--muted)}
-h1{margin:0;font:800 clamp(40px,8vw,68px)/1.02 var(--display);letter-spacing:-.03em;text-wrap:balance}
-.lede{margin:18px 0 0;max-width:46ch;font-size:clamp(17px,2.2vw,19px);color:var(--muted)}
-.meta{margin:26px 0 0;display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;
+h1{margin:0;font:800 clamp(44px,9vw,76px)/1 var(--display);letter-spacing:-.035em}
+h1 .grain{display:inline-block;width:.22em;height:.22em;margin-left:.04em;border-radius:50%;
+  background:#F2B01E;vertical-align:.08em}
+.lede{margin:18px 0 0;max-width:52ch;font-size:clamp(17px,2.2vw,20px);color:var(--muted)}
+.lede strong{color:var(--ink);font-weight:600}
+.meta{margin:24px 0 0;display:flex;flex-wrap:wrap;gap:8px 10px;align-items:center;
   font-size:13.5px;color:var(--muted)}
 .meta a{font-weight:600;color:var(--ink);text-underline-offset:3px}
 .dot{width:4px;height:4px;border-radius:50%;background:var(--rule);flex:none}
 
-h2.section{margin:64px 0 18px;font:700 13px/1 var(--body);letter-spacing:.12em;
+h2.section{margin:60px 0 18px;font:700 13px/1 var(--body);letter-spacing:.12em;
   text-transform:uppercase;color:var(--muted)}
 
-.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fill,minmax(268px,1fr))}
-.card{position:relative;display:flex;flex-direction:column;gap:10px;min-width:0;
-  background:var(--surface);border:1px solid var(--rule);border-radius:16px;
-  padding:22px 22px 18px;box-shadow:var(--shadow);
+/* Cards */
+.card{position:relative;display:flex;flex-direction:column;min-width:0;overflow:hidden;
+  background:var(--surface);border:1px solid var(--rule);border-radius:16px;box-shadow:var(--shadow);
   transition:transform .18s cubic-bezier(.2,.7,.3,1), box-shadow .18s ease, border-color .18s ease}
-.card::before{content:"";position:absolute;inset:0 auto auto 22px;width:34px;height:3px;
-  border-radius:0 0 3px 3px;background:var(--c)}
 .card:hover{transform:translateY(-3px);border-color:color-mix(in srgb,var(--c) 55%,var(--rule))}
 .card:has(.title a:focus-visible){border-color:var(--c)}
+.shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:color-mix(in srgb,var(--c) 22%,var(--surface));
+  border-bottom:1px solid var(--rule)}
+.shot img{display:block;width:100%;height:100%;object-fit:cover;object-position:top;
+  transition:transform .4s cubic-bezier(.2,.7,.3,1)}
+.card:hover .shot img{transform:scale(1.03)}
+.shot::after{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--c)}
+.ph{display:grid;place-items:center;height:100%;font:800 64px/1 var(--display);
+  color:color-mix(in srgb,var(--c) 70%,var(--ink));opacity:.8}
+.body{display:flex;flex-direction:column;gap:9px;flex:1;padding:18px 20px 16px}
 .kind{font:700 11.5px/1 var(--body);letter-spacing:.1em;text-transform:uppercase;
   color:color-mix(in srgb,var(--c) 68%,var(--ink))}
 .title{margin:0;font:700 22px/1.2 var(--display);letter-spacing:-.015em}
 .title a{text-decoration:none}
 .title a::after{content:"";position:absolute;inset:0;border-radius:16px}
 .card p{margin:0;color:var(--muted);font-size:15px}
-.foot{margin-top:auto;padding-top:14px;display:flex;align-items:center;gap:14px;
+.stack{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 0;padding:0;list-style:none}
+.stack li{padding:3px 9px;border-radius:999px;background:var(--chip);color:var(--muted);
+  font-size:12.5px;font-weight:600;line-height:1.4}
+.foot{margin-top:auto;padding-top:12px;display:flex;align-items:center;gap:12px;
   font-size:13.5px;font-weight:600}
+.foot time{color:var(--muted);font-weight:400;font-size:13px}
 .open{color:color-mix(in srgb,var(--c) 70%,var(--ink))}
 .code{position:relative;z-index:1;color:var(--muted);text-decoration:none;margin-left:auto}
 .code:hover{color:var(--ink);text-decoration:underline;text-underline-offset:3px}
 .arrow{display:inline-block;transition:transform .18s ease}
 .card:hover .arrow{transform:translateX(3px)}
 
-.plain{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(268px,1fr))}
-.plain a{display:flex;gap:10px;align-items:baseline;padding:14px 16px;text-decoration:none;
-  background:var(--surface);border:1px solid var(--rule);border-radius:12px;
-  transition:border-color .18s ease}
+/* Featured */
+.feature{margin-top:44px}
+@media (min-width:760px){
+  .feature{display:grid;grid-template-columns:1.25fr 1fr}
+  .feature .shot{aspect-ratio:auto;min-height:320px;border-bottom:0;border-right:1px solid var(--rule)}
+  .feature .shot::after{left:auto;top:0;width:3px;height:auto}
+  .feature .body{padding:30px 30px 24px;gap:12px;justify-content:center}
+  .feature .title{font-size:clamp(28px,3.4vw,38px)}
+  .feature p{font-size:16.5px}
+}
+
+/* Filters */
+.bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;margin:60px 0 18px}
+.bar h2.section{margin:0}
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.filters button{font:600 13.5px/1 var(--body);color:var(--muted);background:transparent;
+  border:1px solid var(--rule);border-radius:999px;padding:8px 13px;cursor:pointer}
+.filters button b{font-weight:700;opacity:.6;margin-left:2px}
+.filters button:hover{color:var(--ink);border-color:var(--muted)}
+.filters button[aria-pressed="true"]{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.grid{display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.grid .card[hidden]{display:none}
+
+/* Workshop */
+.plain{display:grid;gap:10px;grid-template-columns:repeat(auto-fill,minmax(290px,1fr))}
+.plain a{display:flex;flex-direction:column;gap:2px;padding:14px 16px;text-decoration:none;
+  background:var(--surface);border:1px solid var(--rule);border-radius:12px;transition:border-color .18s ease}
 .plain a:hover{border-color:var(--muted)}
 .plain strong{font:700 16px/1.3 var(--display)}
 .plain span{color:var(--muted);font-size:13.5px}
 
+/* About */
+.about{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.about div{padding:18px 18px 16px;border-top:2px solid var(--rule)}
+.about h3{margin:0 0 4px;font:700 16px/1.3 var(--display)}
+.about p{margin:0;color:var(--muted);font-size:14.5px}
+
 footer{margin-top:72px;padding-top:22px;border-top:1px solid var(--rule);
   display:flex;flex-wrap:wrap;gap:8px 16px;color:var(--muted);font-size:14px}
 footer a{font-weight:600;color:var(--ink)}
+footer .right{margin-left:auto}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 </style>
 </head>
@@ -83,106 +135,148 @@ footer a{font-weight:600;color:var(--ink)}
 <div class="wrap">
   <header>
     <p class="eyebrow">just-rice.github.io</p>
-    <h1>Just Rice</h1>
-    <p class="lede">Games, study tools and data you can poke at &mdash; all of it built for the browser, with nothing to install.</p>
+    <h1>Just Rice<span class="grain" aria-hidden="true"></span></h1>
+    <p class="lede">Games, study tools and data you can poke at. <strong>Everything runs in your browser</strong>: nothing to install, no accounts, and the code for all of it is open.</p>
     <p class="meta">
       <a href="https://github.com/Just-Rice">github.com/Just-Rice</a>
-      <i class="dot" aria-hidden="true"></i><span>9 live projects</span>
+      <i class="dot" aria-hidden="true"></i><span><!-- build:count -->9 live projects<!-- /build:count --></span>
       <i class="dot" aria-hidden="true"></i><span>Open source</span>
     </p>
   </header>
 
   <main>
-    <h2 class="section">Live projects</h2>
-    <div class="grid">
-
-      <article class="card" style="--c:#F2B01E">
-        <span class="kind">Study tool</span>
+    <!-- build:featured -->
+    <article class="card feature" data-cat="learning" style="--c:#F2B01E">
+      <div class="shot"><img src="img/test-prep.webp" alt="Screenshot of Test Prep" width="800" height="500" fetchpriority="high" decoding="async"></div>
+      <div class="body">
+        <span class="kind">Featured &middot; Study tool</span>
         <h3 class="title"><a href="https://just-rice.github.io/test-prep/">Test Prep</a></h3>
-        <p>Adaptive SAT, PSAT, ACT and MCAT practice: placement tests, timed practice tests in the real format, mistake review and a study dashboard.</p>
-        <p class="foot"><span class="open">Open <span class="arrow">&rarr;</span></span>
-          <a class="code" href="https://github.com/Just-Rice/test-prep">Code</a></p>
-      </article>
+        <p>Adaptive practice for the SAT, PSAT, ACT and MCAT: a placement test, timed practice tests in each exam&#x27;s real format, mistake review and a daily study plan.</p>
+        <ul class="stack"><li>Vanilla JS</li><li>No build step</li></ul>
+        <p class="foot"><span class="open">Open <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-09-25">Updated Sep 2026</time><a class="code" href="https://github.com/Just-Rice/test-prep">Code</a></p>
+      </div>
+    </article>
+    <!-- /build:featured -->
 
-      <article class="card" style="--c:#E2603A">
-        <span class="kind">Game</span>
-        <h3 class="title"><a href="https://just-rice.github.io/megabonk/">MEGABONK</a></h3>
-        <p>A 3D survivor-roguelike. Pick a bonker, get swarmed, auto-bonk everything and try to survive twenty minutes.</p>
-        <p class="foot"><span class="open">Play <span class="arrow">&rarr;</span></span>
-          <a class="code" href="https://github.com/Just-Rice/megabonk">Code</a></p>
-      </article>
-
-      <article class="card" style="--c:#D94F8A">
-        <span class="kind">Games</span>
-        <h3 class="title"><a href="https://just-rice.github.io/gamehub/">GameHub</a></h3>
-        <p>Fifteen arcade classics in one place &mdash; snake, breakout, tetris and the rest &mdash; written in plain JavaScript.</p>
-        <p class="foot"><span class="open">Play <span class="arrow">&rarr;</span></span>
-          <a class="code" href="https://github.com/Just-Rice/gamehub">Code</a></p>
-      </article>
-
-      <article class="card" style="--c:#2F8A5B">
-        <span class="kind">Game</span>
-        <h3 class="title"><a href="https://just-rice.github.io/Monopolyish/">Monopolyish</a></h3>
-        <p>A full browser Monopoly with computer opponents, auctions, trading, mortgages and hotels &mdash; plus online play.</p>
-        <p class="foot"><span class="open">Play <span class="arrow">&rarr;</span></span>
-          <a class="code" href="https://github.com/Just-Rice/Monopolyish">Code</a></p>
-      </article>
-
-      <article class="card" style="--c:#B4682A">
-        <span class="kind">Game</span>
-        <h3 class="title"><a href="https://just-rice.github.io/Chowka-Bhara/">Chowka-Bhara</a></h3>
-        <p>The traditional Indian cowrie board game, with a heuristic computer opponent and no dependencies.</p>
-        <p class="foot"><span class="open">Play <span class="arrow">&rarr;</span></span>
-          <a class="code" href="https://github.com/Just-Rice/Chowka-Bhara">Code</a></p>
-      </article>
-
-      <article class="card" style="--c:#7C5CD6">
-        <span class="kind">News</span>
-        <h3 class="title"><a href="https://just-rice.github.io/groundish-news/">Groundish News</a></h3>
-        <p>A news reader that shows every side of a story, clustering the same event as it was reported across 66 outlets.</p>
-        <p class="foot"><span class="open">Read <span class="arrow">&rarr;</span></span>
-          <a class="code" href="https://github.com/Just-Rice/groundish-news">Code</a></p>
-      </article>
-
-      <article class="card" style="--c:#4E9B5B">
-        <span class="kind">Data</span>
-        <h3 class="title"><a href="https://just-rice.github.io/food-is-medicine/">Food is Medicine</a></h3>
-        <p>Nutrition for 105 raw whole foods from USDA FoodData Central, measured against your own reference intakes.</p>
-        <p class="foot"><span class="open">Open <span class="arrow">&rarr;</span></span>
-          <a class="code" href="https://github.com/Just-Rice/food-is-medicine">Code</a></p>
-      </article>
-
-      <article class="card" style="--c:#2E7FE8">
-        <span class="kind">Tool</span>
-        <h3 class="title"><a href="https://just-rice.github.io/subtrackr/">Subtrackr</a></h3>
-        <p>A subscription tracker that knows the price is different where you live: 95 services, 341 tiers, 50 markets.</p>
-        <p class="foot"><span class="open">Open <span class="arrow">&rarr;</span></span>
-          <a class="code" href="https://github.com/Just-Rice/subtrackr">Code</a></p>
-      </article>
-
-      <article class="card" style="--c:#1C94A3">
-        <span class="kind">Explainer</span>
-        <h3 class="title"><a href="https://just-rice.github.io/about-blank-lab/">About:Blank Lab</a></h3>
-        <p>How about:blank tabs work, what they hide and what they don&rsquo;t, with a launcher to open any link inside one.</p>
-        <p class="foot"><span class="open">Open <span class="arrow">&rarr;</span></span>
-          <a class="code" href="https://github.com/Just-Rice/about-blank-lab">Code</a></p>
-      </article>
-
+    <div class="bar">
+      <h2 class="section" id="all">All projects</h2>
+      <div class="filters" role="group" aria-label="Filter projects"><!-- build:filters -->
+      <button type="button" data-filter="all" aria-pressed="true">All <b>9</b></button>
+      <button type="button" data-filter="games" aria-pressed="false">Games <b>4</b></button>
+      <button type="button" data-filter="learning" aria-pressed="false">Learning <b>2</b></button>
+      <button type="button" data-filter="tools" aria-pressed="false">Tools &amp; data <b>3</b></button>
+      <!-- /build:filters --></div>
     </div>
+    <div class="grid" id="grid"><!-- build:grid -->
+      <article class="card" data-cat="learning" style="--c:#1C94A3">
+        <div class="shot"><img src="img/about-blank-lab.webp" alt="Screenshot of About:Blank Lab" width="800" height="500" loading="lazy" decoding="async"></div>
+        <div class="body">
+          <span class="kind">Explainer</span>
+          <h3 class="title"><a href="https://just-rice.github.io/about-blank-lab/">About:Blank Lab</a></h3>
+          <p>How about:blank tabs work, what they hide and what they don&#x27;t, with a launcher to open any link inside one.</p>
+          <ul class="stack"><li>HTML</li><li>Explainer</li></ul>
+          <p class="foot"><span class="open">Open <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-09-25">Updated Sep 2026</time><a class="code" href="https://github.com/Just-Rice/about-blank-lab">Code</a></p>
+        </div>
+      </article>
+      <article class="card" data-cat="games" style="--c:#E2603A">
+        <div class="shot"><img src="img/megabonk.webp" alt="Screenshot of MEGABONK" width="800" height="500" loading="lazy" decoding="async"></div>
+        <div class="body">
+          <span class="kind">Game</span>
+          <h3 class="title"><a href="https://just-rice.github.io/megabonk/">MEGABONK</a></h3>
+          <p>A 3D survivor-roguelike. Pick a bonker, get swarmed, auto-bonk everything and try to last twenty minutes. Works on phones too.</p>
+          <ul class="stack"><li>three.js</li><li>3D</li></ul>
+          <p class="foot"><span class="open">Play <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-09-08">Updated Sep 2026</time><a class="code" href="https://github.com/Just-Rice/megabonk">Code</a></p>
+        </div>
+      </article>
+      <article class="card" data-cat="games" style="--c:#2F8A5B">
+        <div class="shot"><img src="img/monopolyish.webp" alt="Screenshot of Monopolyish" width="800" height="500" loading="lazy" decoding="async"></div>
+        <div class="body">
+          <span class="kind">Game</span>
+          <h3 class="title"><a href="https://just-rice.github.io/Monopolyish/">Monopolyish</a></h3>
+          <p>A full browser Monopoly with computer opponents, auctions, trading, mortgages and hotels, plus online play with friends.</p>
+          <ul class="stack"><li>Single file</li><li>Online play</li></ul>
+          <p class="foot"><span class="open">Play <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-09-01">Updated Sep 2026</time><a class="code" href="https://github.com/Just-Rice/Monopolyish">Code</a></p>
+        </div>
+      </article>
+      <article class="card" data-cat="games" style="--c:#B4682A">
+        <div class="shot"><img src="img/chowka-bhara.webp" alt="Screenshot of Chowka-Bhara" width="800" height="500" loading="lazy" decoding="async"></div>
+        <div class="body">
+          <span class="kind">Game</span>
+          <h3 class="title"><a href="https://just-rice.github.io/Chowka-Bhara/">Chowka-Bhara</a></h3>
+          <p>The traditional Indian cowrie race to the centre, with a computer opponent that plays to win and online play.</p>
+          <ul class="stack"><li>Vanilla JS</li><li>Online play</li></ul>
+          <p class="foot"><span class="open">Play <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-24">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/Chowka-Bhara">Code</a></p>
+        </div>
+      </article>
+      <article class="card" data-cat="tools" style="--c:#7C5CD6">
+        <div class="shot"><img src="img/groundish-news.webp" alt="Screenshot of Groundish News" width="800" height="500" loading="lazy" decoding="async"></div>
+        <div class="body">
+          <span class="kind">News</span>
+          <h3 class="title"><a href="https://just-rice.github.io/groundish-news/">Groundish News</a></h3>
+          <p>A news reader that shows every side of a story: the same event across 66 outlets, how each side headlined it, and what one side isn&#x27;t covering.</p>
+          <ul class="stack"><li>Python</li><li>Vanilla JS</li></ul>
+          <p class="foot"><span class="open">Read <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-24">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/groundish-news">Code</a></p>
+        </div>
+      </article>
+      <article class="card" data-cat="tools" style="--c:#4E9B5B">
+        <div class="shot"><img src="img/food-is-medicine.webp" alt="Screenshot of Food is Medicine" width="800" height="500" loading="lazy" decoding="async"></div>
+        <div class="body">
+          <span class="kind">Data</span>
+          <h3 class="title"><a href="https://just-rice.github.io/food-is-medicine/">Food is Medicine</a></h3>
+          <p>Nutrition for 1,002 foods from USDA FoodData Central, measured against your own needs, plus an honestly graded guide to medicinal herbs.</p>
+          <ul class="stack"><li>USDA data</li><li>Vanilla JS</li></ul>
+          <p class="foot"><span class="open">Open <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-24">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/food-is-medicine">Code</a></p>
+        </div>
+      </article>
+      <article class="card" data-cat="tools" style="--c:#2E7FE8">
+        <div class="shot"><img src="img/subtrackr.webp" alt="Screenshot of Subtrackr" width="800" height="500" loading="lazy" decoding="async"></div>
+        <div class="body">
+          <span class="kind">Tool</span>
+          <h3 class="title"><a href="https://just-rice.github.io/subtrackr/">Subtrackr</a></h3>
+          <p>A subscription tracker that knows the price is different where you live: 130 services, 465 tiers and 50 markets, all kept on your device.</p>
+          <ul class="stack"><li>Vanilla JS</li><li>Offline</li></ul>
+          <p class="foot"><span class="open">Open <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-24">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/subtrackr">Code</a></p>
+        </div>
+      </article>
+      <article class="card" data-cat="games" style="--c:#D94F8A">
+        <div class="shot"><img src="img/gamehub.webp" alt="Screenshot of GameHub" width="800" height="500" loading="lazy" decoding="async"></div>
+        <div class="body">
+          <span class="kind">Games</span>
+          <h3 class="title"><a href="https://just-rice.github.io/gamehub/">GameHub</a></h3>
+          <p>Fifteen arcade classics in one place, from Snake and Tetris to Minesweeper and Wordle, all drawn and scored by hand.</p>
+          <ul class="stack"><li>Canvas</li><li>Web Audio</li></ul>
+          <p class="foot"><span class="open">Play <span class="arrow" aria-hidden="true">&rarr;</span></span><time datetime="2026-08-11">Updated Aug 2026</time><a class="code" href="https://github.com/Just-Rice/gamehub">Code</a></p>
+        </div>
+      </article>
+    <!-- /build:grid --></div>
 
     <h2 class="section">Also in the workshop</h2>
-    <div class="plain">
-      <a href="https://github.com/Just-Rice/traceline">
-        <strong>traceline</strong>
-        <span>A synthetic-data study of the people-search genre. No scraping, no backend. Code only.</span>
-      </a>
+    <div class="plain"><!-- build:workshop -->
+      <a href="https://github.com/Just-Rice/traceline"><strong>traceline</strong><span>A synthetic-data study of the people-search genre. No scraping, no backend, nobody real. Code only.</span></a>
+    <!-- /build:workshop --></div>
+
+    <h2 class="section">How these are made</h2>
+    <div class="about">
+      <div><h3>Nothing to install</h3><p>Every project is a web page. Open the link and it works, on a laptop or a phone.</p></div>
+      <div><h3>Your data stays with you</h3><p>Progress and settings are saved in your own browser, not on a server.</p></div>
+      <div><h3>Plain code, no build step</h3><p>Mostly HTML, CSS and JavaScript without frameworks, so the code is easy to read.</p></div>
     </div>
   </main>
 
   <footer>
     <span>Built by Just Rice.</span>
     <a href="https://github.com/Just-Rice">All repositories on GitHub</a>
+    <span class="right">Last project update: <!-- build:updated --><time datetime="2026-09-25">25 September 2026</time><!-- /build:updated --></span>
   </footer>
 </div>
+<script>
+// Filter chips: show only the cards in the chosen category. Without JS every card shows.
+document.querySelector(".filters").addEventListener("click", e => {
+  const btn = e.target.closest("button"); if (!btn) return;
+  const f = btn.dataset.filter;
+  for (const b of e.currentTarget.children) b.setAttribute("aria-pressed", b === btn);
+  for (const c of document.querySelectorAll("#grid .card")) c.hidden = f !== "all" && c.dataset.cat !== f;
+});
+</script>
 </body>
 </html>

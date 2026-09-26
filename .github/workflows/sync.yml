@@ -1,0 +1,40 @@
+# Keeps the home page in step with the Just-Rice repos on GitHub.
+# Adds new GitHub Pages projects, refreshes "Updated" dates, and commits only if something changed.
+name: Sync projects
+
+on:
+  schedule:
+    - cron: "17 9 * * *"   # daily, 09:17 UTC
+  workflow_dispatch:        # "Run workflow" button on the Actions tab
+  push:
+    branches: [main]
+    paths: [projects.json, scripts/**, index.html]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Update projects.json from GitHub and rebuild
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          python3 scripts/sync.py
+          python3 scripts/build.py
+      - name: Commit if anything changed
+        run: |
+          if git diff --quiet; then echo "Nothing to update."; exit 0; fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -am "Sync projects from GitHub"
+          git push

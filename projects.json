@@ -1,0 +1,178 @@
+{
+  "_readme": "The list behind just-rice.github.io. Edit this, then run: python3 scripts/build.py. The daily GitHub Action (scripts/sync.py) adds new Pages repos and refreshes the dates on its own.",
+  "skip": [
+    "Just-Rice.github.io",
+    "sat-prep",
+    "chowkabara"
+  ],
+  "projects": [
+    {
+      "repo": "test-prep",
+      "name": "Test Prep",
+      "kind": "Study tool",
+      "category": "learning",
+      "color": "#F2B01E",
+      "blurb": "Adaptive practice for the SAT, PSAT, ACT and MCAT: a placement test, timed practice tests in each exam's real format, mistake review and a daily study plan.",
+      "stack": [
+        "Vanilla JS",
+        "No build step"
+      ],
+      "action": "Open",
+      "image": "img/test-prep.webp",
+      "featured": true,
+      "live": true,
+      "added": "2026-09-13",
+      "updated": "2026-09-25"
+    },
+    {
+      "repo": "megabonk",
+      "name": "MEGABONK",
+      "kind": "Game",
+      "category": "games",
+      "color": "#E2603A",
+      "blurb": "A 3D survivor-roguelike. Pick a bonker, get swarmed, auto-bonk everything and try to last twenty minutes. Works on phones too.",
+      "stack": [
+        "three.js",
+        "3D"
+      ],
+      "action": "Play",
+      "image": "img/megabonk.webp",
+      "live": true,
+      "added": "2026-09-05",
+      "updated": "2026-09-08"
+    },
+    {
+      "repo": "gamehub",
+      "name": "GameHub",
+      "kind": "Games",
+      "category": "games",
+      "color": "#D94F8A",
+      "blurb": "Fifteen arcade classics in one place, from Snake and Tetris to Minesweeper and Wordle, all drawn and scored by hand.",
+      "stack": [
+        "Canvas",
+        "Web Audio"
+      ],
+      "action": "Play",
+      "image": "img/gamehub.webp",
+      "live": true,
+      "added": "2026-08-11",
+      "updated": "2026-08-11"
+    },
+    {
+      "repo": "Monopolyish",
+      "name": "Monopolyish",
+      "kind": "Game",
+      "category": "games",
+      "color": "#2F8A5B",
+      "blurb": "A full browser Monopoly with computer opponents, auctions, trading, mortgages and hotels, plus online play with friends.",
+      "stack": [
+        "Single file",
+        "Online play"
+      ],
+      "action": "Play",
+      "image": "img/monopolyish.webp",
+      "live": true,
+      "added": "2026-08-06",
+      "updated": "2026-09-01"
+    },
+    {
+      "repo": "Chowka-Bhara",
+      "name": "Chowka-Bhara",
+      "kind": "Game",
+      "category": "games",
+      "color": "#B4682A",
+      "blurb": "The traditional Indian cowrie race to the centre, with a computer opponent that plays to win and online play.",
+      "stack": [
+        "Vanilla JS",
+        "Online play"
+      ],
+      "action": "Play",
+      "image": "img/chowka-bhara.webp",
+      "live": true,
+      "added": "2026-08-12",
+      "updated": "2026-08-24"
+    },
+    {
+      "repo": "groundish-news",
+      "name": "Groundish News",
+      "kind": "News",
+      "category": "tools",
+      "color": "#7C5CD6",
+      "blurb": "A news reader that shows every side of a story: the same event across 66 outlets, how each side headlined it, and what one side isn't covering.",
+      "stack": [
+        "Python",
+        "Vanilla JS"
+      ],
+      "action": "Read",
+      "image": "img/groundish-news.webp",
+      "live": true,
+      "added": "2026-08-22",
+      "updated": "2026-08-24"
+    },
+    {
+      "repo": "food-is-medicine",
+      "name": "Food is Medicine",
+      "kind": "Data",
+      "category": "tools",
+      "color": "#4E9B5B",
+      "blurb": "Nutrition for 1,002 foods from USDA FoodData Central, measured against your own needs, plus an honestly graded guide to medicinal herbs.",
+      "stack": [
+        "USDA data",
+        "Vanilla JS"
+      ],
+      "action": "Open",
+      "image": "img/food-is-medicine.webp",
+      "live": true,
+      "added": "2026-08-22",
+      "updated": "2026-08-24"
+    },
+    {
+      "repo": "subtrackr",
+      "name": "Subtrackr",
+      "kind": "Tool",
+      "category": "tools",
+      "color": "#2E7FE8",
+      "blurb": "A subscription tracker that knows the price is different where you live: 130 services, 465 tiers and 50 markets, all kept on your device.",
+      "stack": [
+        "Vanilla JS",
+        "Offline"
+      ],
+      "action": "Open",
+      "image": "img/subtrackr.webp",
+      "live": true,
+      "added": "2026-08-23",
+      "updated": "2026-08-24"
+    },
+    {
+      "repo": "about-blank-lab",
+      "name": "About:Blank Lab",
+      "kind": "Explainer",
+      "category": "learning",
+      "color": "#1C94A3",
+      "blurb": "How about:blank tabs work, what they hide and what they don't, with a launcher to open any link inside one.",
+      "stack": [
+        "HTML",
+        "Explainer"
+      ],
+      "action": "Open",
+      "image": "img/about-blank-lab.webp",
+      "live": true,
+      "added": "2026-09-25",
+      "updated": "2026-09-25"
+    },
+    {
+      "repo": "traceline",
+      "name": "traceline",
+      "kind": "Study",
+      "category": "tools",
+      "color": "#6B7480",
+      "blurb": "A synthetic-data study of the people-search genre. No scraping, no backend, nobody real. Code only.",
+      "stack": [
+        "Vanilla JS"
+      ],
+      "live": false,
+      "added": "2026-09-04",
+      "updated": "2026-09-04"
+    }
+  ]
+}
