@@ -133,10 +133,14 @@ footer .right{margin-left:auto}
 
 
 /* Rice grains background */
-#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;display:block}
+/* Sized to the large viewport (lvh) so the canvas keeps one size while mobile browser bars slide in and out */
+#bg{position:fixed;left:0;top:0;width:100%;height:100vh;height:100lvh;z-index:0;pointer-events:none;display:block}
 .wrap{position:relative;z-index:1}
 .card,.plain a{background:color-mix(in srgb,var(--surface) 86%,transparent);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px)}
+/* On touch screens, blurring the animated canvas behind every card is too heavy while scrolling */
+@media (hover:none){.card,.plain a{-webkit-backdrop-filter:none;backdrop-filter:none;
+  background:color-mix(in srgb,var(--surface) 94%,transparent)}}
 .filters button:not([aria-pressed="true"]){background:color-mix(in srgb,var(--bg) 60%,transparent)}
 
 /* Cards rise in, one after another; the gold dot hops */
@@ -324,14 +328,23 @@ const dark = () => { const t = document.documentElement.dataset.theme; return t 
 
 // ---- Rice grains ----
 const cv = document.getElementById("bg"), ctx = cv.getContext("2d");
-let W, H, grains = [], mouse = {x: -9999, y: -9999}, raf = 0;
+let W = 0, H = 0, D = 0, grains = [], mouse = {x: -9999, y: -9999}, raf = 0;
 const rnd = (a, b) => a + Math.random() * (b - a);
+const wrap = (v, lo, span) => ((v - lo) % span + span) % span + lo;
 let lastSy = scrollY;
+const grain = () => ({x: rnd(0, W), y: rnd(0, H), z: rnd(.5, 1),
+  a: rnd(0, 6.28), va: rnd(-.01, .01), sw: rnd(0, 6.28), vx: 0, vy: 0});
+// Mobile browsers fire resize whenever the address bar shows or hides during a scroll.
+// Measure the canvas itself (it is sized to the large viewport, so that doesn't change it),
+// and when the size really does change, keep the grains where they are instead of scattering new ones.
 function resize(){
-  const dpr = Math.min(devicePixelRatio || 1, 2);
-  W = innerWidth; H = innerHeight; cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  grains = Array.from({length: Math.round(W * H / 16000)}, () => ({x: rnd(0, W), y: rnd(0, H), z: rnd(.5, 1),
-    a: rnd(0, 6.28), va: rnd(-.01, .01), sw: rnd(0, 6.28), vx: 0, vy: 0}));
+  const dpr = Math.min(devicePixelRatio || 1, 2), w = cv.clientWidth || innerWidth, h = cv.clientHeight || innerHeight;
+  if (w === W && h === H && dpr === D) return;
+  if (W && H) for (const g of grains){ g.x *= w / W; g.y *= h / H; }
+  W = w; H = h; D = dpr; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const n = Math.round(W * H / 16000);
+  if (grains.length > n) grains.length = n;
+  while (grains.length < n) grains.push(grain());
   draw();
 }
 // Grains live in screen coordinates: x and y are exactly where each one is drawn,
@@ -348,8 +361,9 @@ function draw(){
       if (d2 < 14000){ const d = Math.sqrt(d2) || 1, f = (1 - d2 / 14000) * 1.4; g.vx += dx / d * f; g.vy += dy / d * f; }
       g.x += g.vx + Math.sin(g.sw) * .25; g.y += g.vy; g.vx *= .92; g.vy *= .92;
     }
-    if (g.y > H + 20) g.y -= H + 40; else if (g.y < -20) g.y += H + 40;
-    if (g.x > W + 10) g.x -= W + 20; else if (g.x < -10) g.x += W + 20;
+    // Wrap with a modulo: a fast fling or a jump to an anchor can move a grain several screens in one frame
+    if (g.y > H + 20 || g.y < -20) g.y = wrap(g.y, -20, H + 40);
+    if (g.x > W + 10 || g.x < -10) g.x = wrap(g.x, -10, W + 20);
     ctx.globalAlpha = .5 * g.z;
     ctx.save(); ctx.translate(g.x, g.y); ctx.rotate(g.a);
     ctx.beginPath(); ctx.ellipse(0, 0, 2.6 * g.z + 1, 6 * g.z + 2, 0, 0, 7); ctx.fill(); ctx.restore();
@@ -362,6 +376,9 @@ addEventListener("pointermove", e => { mouse.x = e.clientX; mouse.y = e.clientY;
 const away = () => { mouse.x = mouse.y = -9999; };
 document.addEventListener("pointerleave", away);
 addEventListener("pointerup", e => { if (e.pointerType !== "mouse") away(); });
+// When a touch turns into a scroll the browser sends pointercancel, not pointerup. Without this the
+// last touch point stays live forever and keeps shoving every grain that drifts past it.
+addEventListener("pointercancel", away);
 addEventListener("blur", away);
 darkQ.addEventListener("change", draw);
 if (reduce) addEventListener("scroll", draw, {passive: true});
