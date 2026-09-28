@@ -29,13 +29,20 @@ PALETTE = ["#F2B01E", "#E2603A", "#D94F8A", "#2F8A5B", "#B4682A", "#7C5CD6",
 
 
 def fetch_repos():
-    req = urllib.request.Request(
-        f"https://api.github.com/users/{OWNER}/repos?per_page=100&type=owner",
-        headers={"Accept": "application/vnd.github+json", "User-Agent": "just-rice-home-sync"})
-    if os.environ.get("GITHUB_TOKEN"):
-        req.add_header("Authorization", f"Bearer {os.environ['GITHUB_TOKEN']}")
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.load(r)
+    # The API returns at most 100 repos per page, so keep asking until a short page comes back.
+    repos, page = [], 1
+    while True:
+        req = urllib.request.Request(
+            f"https://api.github.com/users/{OWNER}/repos?per_page=100&type=owner&page={page}",
+            headers={"Accept": "application/vnd.github+json", "User-Agent": "just-rice-home-sync"})
+        if os.environ.get("GITHUB_TOKEN"):
+            req.add_header("Authorization", f"Bearer {os.environ['GITHUB_TOKEN']}")
+        with urllib.request.urlopen(req, timeout=30) as r:
+            batch = json.load(r)
+        repos += batch
+        if len(batch) < 100:
+            return repos
+        page += 1
 
 
 def is_redirect(r):
@@ -83,7 +90,7 @@ def new_entry(r, used_colors):
 
 def sync(dry_run=False):
     path = ROOT / "projects.json"
-    data = json.loads(path.read_text())
+    data = json.loads(path.read_text(encoding="utf-8"))
     projects = data["projects"]
     skip = {s.lower() for s in data.get("skip", [])}
     repos = {r["name"].lower(): r for r in fetch_repos()}
@@ -113,7 +120,7 @@ def sync(dry_run=False):
     print("\n".join(changes) or "No changes: projects.json already matches GitHub.")
     if dry_run or not any(not c.startswith("warning") for c in changes):
         return
-    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+    path.write_text(json.dumps(data, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     build.build()
 
 

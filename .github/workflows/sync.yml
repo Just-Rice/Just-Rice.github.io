@@ -37,4 +37,6 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git commit -am "Sync projects from GitHub"
+          # main may have moved while this ran (a push during the job); replay on top instead of failing
+          git pull --rebase origin main
           git push

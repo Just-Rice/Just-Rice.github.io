@@ -29,6 +29,11 @@ def repo_url(p):
     return f"https://github.com/{OWNER}/{p['repo']}"
 
 
+def updated(p):
+    # An empty repo has no push date, so sync can store null here; treat it like a missing date.
+    return p.get("updated") or ""
+
+
 def month(iso):
     if not iso:
         return ""
@@ -50,9 +55,9 @@ def chips(p):
 
 
 def foot(p):
-    updated = month(p.get("updated"))
-    when = (f'<time datetime="{esc(p["updated"][:10])}">Updated {updated}</time>'
-            if updated else "")
+    shown = month(updated(p))
+    when = (f'<time datetime="{esc(updated(p)[:10])}">Updated {shown}</time>'
+            if shown else "")
     return (f'<p class="foot"><span class="open">{esc(p.get("action", "Open"))} '
             f'<span class="arrow" aria-hidden="true">&rarr;</span></span>{when}'
             f'<a class="code" href="{repo_url(p)}">Code</a></p>')
@@ -92,11 +97,11 @@ def workshop(p, i):
 
 
 def build():
-    data = json.loads((ROOT / "projects.json").read_text())
+    data = json.loads((ROOT / "projects.json").read_text(encoding="utf-8"))
     projects = data["projects"]
     live = [p for p in projects if p.get("live", True)]
     # The top card is whichever project was pushed to most recently ("pinned": true overrides).
-    live.sort(key=lambda p: p.get("updated", ""), reverse=True)
+    live.sort(key=updated, reverse=True)
     top = next((p for p in live if p.get("pinned")), live[0] if live else None)
     rest = [p for p in live if p is not top]
     shop = [p for p in projects if not p.get("live", True)]
@@ -107,24 +112,26 @@ def build():
     filters += [f'<button type="button" data-filter="{k}" aria-pressed="false">{esc(label)} <b>{counts[k]}</b></button>'
                 for k, label in CATEGORIES if counts[k]]
 
-    newest = max((p.get("updated", "") for p in projects), default="")
+    newest = max((updated(p) for p in projects), default="")
+    newest_day = dt.date.fromisoformat(newest[:10]) if newest else None
     parts = {
-        "count": f"{len(live)} live projects",
+        "count": f"{len(live)} live project{'' if len(live) == 1 else 's'}",
         "featured": featured(top, 4) + "\n    " if top else "",
         "filters": "\n      " + "\n      ".join(filters) + "\n      ",
         "grid": "".join(card(p, 5 + n) for n, p in enumerate(rest)) + "\n    ",
         "workshop": "".join(workshop(p, 5 + len(rest) + n) for n, p in enumerate(shop)) + "\n    ",
-        "updated": (f'<time datetime="{esc(newest[:10])}">{dt.date.fromisoformat(newest[:10]).strftime("%-d %B %Y")}</time>'
-                    if newest else ""),
+        # %-d isn't supported on Windows, so build the day number by hand.
+        "updated": (f'<time datetime="{esc(newest[:10])}">{newest_day.day} {newest_day:%B %Y}</time>'
+                    if newest_day else ""),
     }
 
-    page = (ROOT / "index.html").read_text()
+    page = (ROOT / "index.html").read_text(encoding="utf-8")
     for name, content in parts.items():
         pattern = re.compile(rf"(<!-- build:{name} -->).*?(<!-- /build:{name} -->)", re.S)
         if not pattern.search(page):
             raise SystemExit(f"index.html is missing the build:{name} markers")
         page = pattern.sub(lambda m: m.group(1) + content + m.group(2), page)
-    (ROOT / "index.html").write_text(page)
+    (ROOT / "index.html").write_text(page, encoding="utf-8")
     print(f"Built index.html: {len(live)} live, {len(projects) - len(live)} in the workshop")
 
 
