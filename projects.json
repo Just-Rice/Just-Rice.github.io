@@ -21,7 +21,7 @@
       "image": "img/test-prep.webp",
       "live": true,
       "added": "2026-09-13",
-      "updated": "2026-09-29T03:35:02Z"
+      "updated": "2026-09-29T21:36:34Z"
     },
     {
       "repo": "megabonk",
@@ -157,7 +157,7 @@
       "image": "img/trading-lab.webp",
       "live": true,
       "added": "2026-09-26",
-      "updated": "2026-09-29T02:09:59Z"
+      "updated": "2026-09-30T01:24:48Z"
     },
     {
       "repo": "about-blank-lab",
@@ -189,6 +189,23 @@
       "live": false,
       "added": "2026-09-04",
       "updated": "2026-09-04T02:48:32Z"
+    },
+    {
+      "repo": "hsn-3d",
+      "name": "Hsn 3D",
+      "kind": "Tool",
+      "category": "tools",
+      "color": "#C2410C",
+      "blurb": "A new project.",
+      "stack": [
+        "JavaScript"
+      ],
+      "action": "Open",
+      "image": "img/hsn-3d.webp",
+      "live": true,
+      "auto_added": true,
+      "added": "2026-09-29",
+      "updated": "2026-09-30T14:45:11Z"
     }
   ]
 }
