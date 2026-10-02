@@ -7,6 +7,24 @@
   ],
   "projects": [
     {
+      "repo": "hsn-3d",
+      "name": "HSN 3D",
+      "kind": "Game",
+      "category": "games",
+      "color": "#9C3A2C",
+      "blurb": "Walk the halls of West Windsor-Plainsboro High School North in 3D. Both floors are rebuilt from the real floor plans and sized from photos of the school, from the gyms, pool and theatre to the dining halls, with Blender-baked lighting and a campus traced from satellite. Works on phones too.",
+      "stack": [
+        "three.js",
+        "Blender",
+        "3D"
+      ],
+      "action": "Play",
+      "image": "img/hsn-3d.webp",
+      "live": true,
+      "added": "2026-09-29",
+      "updated": "2026-10-01T13:20:29Z"
+    },
+    {
       "repo": "test-prep",
       "name": "Test Prep",
       "kind": "Study tool",
@@ -189,23 +207,6 @@
       "live": false,
       "added": "2026-09-04",
       "updated": "2026-09-04T02:48:32Z"
-    },
-    {
-      "repo": "hsn-3d",
-      "name": "Hsn 3D",
-      "kind": "Tool",
-      "category": "tools",
-      "color": "#C2410C",
-      "blurb": "A new project.",
-      "stack": [
-        "JavaScript"
-      ],
-      "action": "Open",
-      "image": "img/hsn-3d.webp",
-      "live": true,
-      "auto_added": true,
-      "added": "2026-09-29",
-      "updated": "2026-10-01T13:20:29Z"
     }
   ]
 }
