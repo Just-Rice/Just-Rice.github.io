@@ -12,7 +12,7 @@
       "kind": "Game",
       "category": "games",
       "color": "#9C3A2C",
-      "blurb": "Walk the halls of West Windsor-Plainsboro High School North in 3D. Both floors are rebuilt from the real floor plans, from the gyms, pool and theatre to the dining halls, with Blender-baked lighting and a campus traced from satellite. Works on phones too.",
+      "blurb": "Walk the halls of West Windsor-Plainsboro High School North in 3D. Both floors are rebuilt from the real floor plans and sized from photos of the school, from the gyms, pool and theatre to the dining halls, with Blender-baked lighting and a campus traced from satellite. Works on phones too.",
       "stack": [
         "three.js",
         "Blender",
