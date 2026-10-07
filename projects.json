@@ -7,6 +7,24 @@
   ],
   "projects": [
     {
+      "repo": "cms-3d",
+      "name": "CMS 3D",
+      "kind": "Game",
+      "category": "games",
+      "color": "#B3202A",
+      "blurb": "Walk the halls of Community Middle School in Plainsboro in 3D. Every room from the floor plan handout, from the 100s to the 1000s, the concourses and the 6th Grade Annex, sized to the real building with LiDAR and photos of the school, with Blender-baked lighting and a campus traced from satellite. Works on phones too.",
+      "stack": [
+        "three.js",
+        "Blender",
+        "3D"
+      ],
+      "action": "Play",
+      "image": "img/cms-3d.webp",
+      "live": true,
+      "added": "2026-10-03",
+      "updated": "2026-10-03T00:00:00Z"
+    },
+    {
       "repo": "hsn-3d",
       "name": "HSN 3D",
       "kind": "Game",
