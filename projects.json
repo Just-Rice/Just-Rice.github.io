@@ -21,8 +21,8 @@
       "action": "Play",
       "image": "img/cms-3d.webp",
       "live": true,
-      "added": "2026-10-03",
-      "updated": "2026-10-03T00:00:00Z"
+      "added": "2026-10-08",
+      "updated": "2026-10-08T00:03:54Z"
     },
     {
       "repo": "hsn-3d",
@@ -40,7 +40,7 @@
       "image": "img/hsn-3d.webp",
       "live": true,
       "added": "2026-09-29",
-      "updated": "2026-10-04T00:20:25Z"
+      "updated": "2026-10-07T23:39:46Z"
     },
     {
       "repo": "test-prep",
