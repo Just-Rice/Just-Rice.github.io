@@ -101,7 +101,7 @@
       "color": "#2F8A5B",
       "blurb": "A full browser Monopoly with computer opponents, auctions, trading, mortgages and hotels, plus online play with friends.",
       "stack": [
-        "Single file",
+        "Vanilla JS",
         "Online play"
       ],
       "action": "Play",
@@ -150,7 +150,7 @@
       "kind": "Data",
       "category": "tools",
       "color": "#4E9B5B",
-      "blurb": "Nutrition for 1,002 foods from USDA FoodData Central, measured against your own needs, plus an honestly graded guide to medicinal herbs.",
+      "blurb": "Nutrition for 1,015 foods from USDA FoodData Central, measured against your own needs, plus an honestly graded guide to medicinal herbs.",
       "stack": [
         "USDA data",
         "Vanilla JS"
@@ -184,7 +184,7 @@
       "kind": "Tool",
       "category": "tools",
       "color": "#4F5BD5",
-      "blurb": "Test trading robots on 25 years of real US prices, for single stocks or mixes of stocks, bonds and gold, with a fair exam against overfitting and live practice trading.",
+      "blurb": "Test trading robots on 26 years of real US prices, for single stocks or mixes of stocks, bonds and gold, with a fair exam against overfitting, live practice trading, and a game where you trade a hidden stretch of history against the robot.",
       "stack": [
         "Vanilla JS",
         "GitHub Actions"
