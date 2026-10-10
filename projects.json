@@ -213,6 +213,23 @@
       "updated": "2026-10-10T12:55:00Z"
     },
     {
+      "repo": "video-player",
+      "name": "Reelbox",
+      "kind": "Tool",
+      "category": "tools",
+      "color": "#E5384F",
+      "blurb": "A video player that saves your uploads to your own Google Drive, so they play on any device and pick up where you stopped.",
+      "stack": [
+        "Vanilla JS",
+        "Google Drive"
+      ],
+      "action": "Open",
+      "image": "img/video-player.webp",
+      "live": true,
+      "added": "2026-10-10",
+      "updated": "2026-10-10T19:41:13Z"
+    },
+    {
       "repo": "traceline",
       "name": "traceline",
       "kind": "Study",
