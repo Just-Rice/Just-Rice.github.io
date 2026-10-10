@@ -48,9 +48,10 @@
       "kind": "Study tool",
       "category": "learning",
       "color": "#F2B01E",
-      "blurb": "Adaptive practice for the SAT, PSAT, ACT and MCAT: a placement test, timed practice tests in each exam's real format, mistake review and a daily study plan.",
+      "blurb": "Adaptive practice for the SAT, PSAT, ACT and MCAT: a placement test, timed practice tests in each exam's real format, mistake review with spaced repetition, MCAT lessons and flashcards, a daily study plan, and sync between your devices.",
       "stack": [
         "Vanilla JS",
+        "Firebase sync",
         "No build step"
       ],
       "action": "Open",
@@ -68,7 +69,8 @@
       "blurb": "A 3D survivor-roguelike. Pick a bonker, get swarmed, auto-bonk everything and try to last twenty minutes. Works on phones too.",
       "stack": [
         "three.js",
-        "3D"
+        "3D",
+        "Web Audio"
       ],
       "action": "Play",
       "image": "img/megabonk.webp",
@@ -84,6 +86,7 @@
       "color": "#D94F8A",
       "blurb": "Fifteen arcade classics in one place, from Snake and Tetris to Minesweeper and Wordle, all drawn and scored by hand.",
       "stack": [
+        "Vanilla JS",
         "Canvas",
         "Web Audio"
       ],
@@ -99,9 +102,9 @@
       "kind": "Game",
       "category": "games",
       "color": "#2F8A5B",
-      "blurb": "A full browser Monopoly with computer opponents, auctions, trading, mortgages and hotels, plus online play with friends.",
+      "blurb": "A full browser Monopoly with computer opponents at three skill levels, auctions, trading, mortgages and hotels, plus online play with friends.",
       "stack": [
-        "Single file",
+        "Vanilla JS",
         "Online play"
       ],
       "action": "Play",
@@ -116,10 +119,11 @@
       "kind": "Game",
       "category": "games",
       "color": "#B4682A",
-      "blurb": "The traditional Indian cowrie race to the centre, with a computer opponent that plays to win and online play.",
+      "blurb": "The traditional Indian cowrie race to the centre on a 5×5 or 7×7 board, with a computer opponent that plays to win, online play, and English, Kannada, Hindi and Spanish.",
       "stack": [
         "Vanilla JS",
-        "Online play"
+        "Online play",
+        "4 languages"
       ],
       "action": "Play",
       "image": "img/chowka-bhara.webp",
@@ -133,10 +137,11 @@
       "kind": "News",
       "category": "tools",
       "color": "#7C5CD6",
-      "blurb": "A news reader that shows every side of a story: the same event across 66 outlets, how each side headlined it, and what one side isn't covering.",
+      "blurb": "A news reader that shows every side of a story: the same event across 66 outlets, how each side headlined it, who owns the outlets, and what one side isn't covering. Refreshed every half hour.",
       "stack": [
         "Python",
-        "Vanilla JS"
+        "Vanilla JS",
+        "GitHub Actions"
       ],
       "action": "Read",
       "image": "img/groundish-news.webp",
@@ -150,10 +155,11 @@
       "kind": "Data",
       "category": "tools",
       "color": "#4E9B5B",
-      "blurb": "Nutrition for 1,002 foods from USDA FoodData Central, measured against your own needs, plus an honestly graded guide to medicinal herbs.",
+      "blurb": "Nutrition for 1,015 foods from USDA FoodData Central, measured against your own needs, with recipes, a weight-change planner and an honestly graded guide to medicinal herbs, in four languages.",
       "stack": [
         "USDA data",
-        "Vanilla JS"
+        "Vanilla JS",
+        "4 languages"
       ],
       "action": "Open",
       "image": "img/food-is-medicine.webp",
@@ -184,7 +190,7 @@
       "kind": "Tool",
       "category": "tools",
       "color": "#4F5BD5",
-      "blurb": "Test trading robots on 25 years of real US prices, for single stocks or mixes of stocks, bonds and gold, with a fair exam against overfitting and live practice trading.",
+      "blurb": "Test trading robots on 26 years of real US prices, for single stocks or mixes of stocks, bonds and gold, with a fair exam against overfitting, live practice trading, and a game where you trade a hidden stretch of history against the robot.",
       "stack": [
         "Vanilla JS",
         "GitHub Actions"
