@@ -218,7 +218,7 @@
       "kind": "Tool",
       "category": "tools",
       "color": "#E5384F",
-      "blurb": "A video player that saves your uploads to your own Google Drive, so they play on any device and pick up where you stopped.",
+      "blurb": "A public video gallery with a full player: speed, subtitles, quality and shortcuts. The owner uploads to Google Drive and anyone can watch.",
       "stack": [
         "Vanilla JS",
         "Google Drive"
