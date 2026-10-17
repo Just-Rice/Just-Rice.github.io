@@ -247,6 +247,23 @@
       "updated": "2026-10-16T23:32:06Z"
     },
     {
+      "repo": "perch",
+      "name": "Perch",
+      "kind": "Tool",
+      "category": "tools",
+      "color": "#0F766E",
+      "blurb": "See and use your Mac from any browser, with its sound: phone, tablet or another computer. Passkey plus code sign-in, checked by the Mac itself, and no servers in between. Free for any Mac user.",
+      "stack": [
+        "WebRTC",
+        "Swift"
+      ],
+      "action": "Open",
+      "image": "img/perch.webp",
+      "live": true,
+      "added": "2026-10-17",
+      "updated": "2026-10-17T19:23:48Z"
+    },
+    {
       "repo": "traceline",
       "name": "traceline",
       "kind": "Study",
