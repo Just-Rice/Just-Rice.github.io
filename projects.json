@@ -276,6 +276,23 @@
       "live": false,
       "added": "2026-09-04",
       "updated": "2026-09-04T02:48:32Z"
+    },
+    {
+      "repo": "veggie-tracker",
+      "name": "Veggie Tracker",
+      "kind": "Data",
+      "category": "tools",
+      "color": "#3E9E6E",
+      "blurb": "A vegetarian take on Food is Medicine: 783 plant-based foods from USDA data, a daily food log and photo-based meal estimates.",
+      "stack": [
+        "USDA data",
+        "Vanilla JS"
+      ],
+      "action": "Open",
+      "image": "img/veggie-tracker.webp",
+      "live": true,
+      "added": "2026-10-29",
+      "updated": "2026-10-29T22:15:00Z"
     }
   ]
 }
