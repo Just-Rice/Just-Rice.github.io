@@ -193,7 +193,7 @@
       "image": "img/trading-lab.webp",
       "live": true,
       "added": "2026-09-26",
-      "updated": "2026-11-03T03:34:30Z"
+      "updated": "2026-11-04T02:32:07Z"
     },
     {
       "repo": "about-blank-lab",
@@ -293,6 +293,23 @@
       "live": true,
       "added": "2026-10-30",
       "updated": "2026-10-30T05:00:00Z"
+    },
+    {
+      "repo": "physics-sim",
+      "name": "Physics Sim",
+      "kind": "Tool",
+      "category": "tools",
+      "color": "#C2410C",
+      "blurb": "A new project.",
+      "stack": [
+        "TypeScript"
+      ],
+      "action": "Open",
+      "image": "img/physics-sim.webp",
+      "live": true,
+      "auto_added": true,
+      "added": "2026-10-31",
+      "updated": "2026-11-01T02:07:37Z"
     }
   ]
 }
