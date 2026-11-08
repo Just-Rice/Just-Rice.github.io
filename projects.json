@@ -3,7 +3,8 @@
   "skip": [
     "Just-Rice.github.io",
     "sat-prep",
-    "chowkabara"
+    "chowkabara",
+    "veggie-tracker"
   ],
   "projects": [
     {
@@ -276,23 +277,6 @@
       "live": false,
       "added": "2026-09-04",
       "updated": "2026-10-30T04:59:53Z"
-    },
-    {
-      "repo": "veggie-tracker",
-      "name": "Veggie Tracker",
-      "kind": "Data",
-      "category": "tools",
-      "color": "#3E9E6E",
-      "blurb": "A vegetarian take on Food is Medicine: 783 plant-based foods from USDA data, a daily food log and photo-based meal estimates.",
-      "stack": [
-        "USDA data",
-        "Vanilla JS"
-      ],
-      "action": "Open",
-      "image": "img/veggie-tracker.webp",
-      "live": true,
-      "added": "2026-10-30",
-      "updated": "2026-10-30T05:00:00Z"
     },
     {
       "repo": "physics-sim",
