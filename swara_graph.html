@@ -92,6 +92,9 @@
     <label>In-tune band: <span id="tolv">±20</span> cents
       <input id="tol" type="range" min="5" max="50" step="1" value="20">
     </label>
+    <label>Microphone
+      <select id="mic" title="Which input to listen to"><option value="">Default mic</option></select>
+    </label>
     <span class="row">
       <button id="start" class="primary">Start mic</button>
       <button id="demo" title="Plays a synthetic voice through the graph, no mic needed">Demo</button>
@@ -410,18 +413,78 @@ function attach(node, toSpeakers) {
   requestAnimationFrame(loop);
 }
 
+// Lists the audio inputs in the Microphone menu. Names only show once mic access is allowed.
+async function refreshMics() {
+  const md = navigator.mediaDevices;
+  if (!md || !md.enumerateDevices) return [];
+  let devs = [];
+  try { devs = (await md.enumerateDevices()).filter(d => d.kind === "audioinput"); } catch (e) { return []; }
+  const sel = $("mic"), want = sel.value || load("mic") || "";
+  sel.innerHTML = "";
+  sel.add(new Option("Default mic", ""));
+  let n = 0;
+  for (const d of devs) {
+    if (!d.deviceId || d.deviceId === "default") continue;   // before permission Chrome hides ids
+    n++;
+    sel.add(new Option(d.label || "Microphone " + n, d.deviceId));
+  }
+  sel.value = [...sel.options].some(o => o.value === want) ? want : "";
+  return devs;
+}
+
+function micErrorText(e) {
+  switch (e && e.name) {
+    case "NotFoundError": case "DevicesNotFoundError": case "OverconstrainedError":
+      return "No microphone found. A Mac mini has no built-in mic, so connect a USB or external mic, " +
+        "headphones with a mic, or AirPods. Then check System Settings > Sound > Input and " +
+        "Chrome's mic setting (chrome://settings/content/microphone).";
+    case "NotAllowedError": case "PermissionDeniedError":
+      return "Microphone access is blocked. In Chrome, click the icon at the left of the address bar, " +
+        "set Microphone to Allow, and reload. On a Mac, also turn on Google Chrome in " +
+        "System Settings > Privacy & Security > Microphone, then quit and reopen Chrome.";
+    case "NotReadableError": case "TrackStartError": case "AbortError":
+      return "The microphone is busy or couldn't start. Close other apps or tabs using it " +
+        "(Zoom, FaceTime, Meet) and press Start mic again.";
+    case "SecurityError": case "InsecureContext":
+      return "The mic only works on a secure page. Open it from https:// (GitHub Pages) or localhost, " +
+        "not as a file.";
+    default:
+      return "Couldn't open the microphone (" + ((e && e.name) || "unknown error") + ").";
+  }
+}
+
 async function startMic() {
   if (state.running) { stopSource(); return; }
   $("msg").textContent = "";
+  const md = navigator.mediaDevices;
+  if (!window.isSecureContext || !md || !md.getUserMedia) {
+    $("msg").textContent = micErrorText({ name: "InsecureContext" });
+    return;
+  }
+  const base = { echoCancellation: false, noiseSuppression: false, autoGainControl: false };
+  const id = $("mic").value;
   try {
     const ctx = await ensureCtx();
-    state.stream = await navigator.mediaDevices.getUserMedia({
-      audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
-    attach(ctx.createMediaStreamSource(state.stream), false);
+    let stream;
+    try {
+      stream = await md.getUserMedia({ audio: id ? { ...base, deviceId: { exact: id } } : base });
+    } catch (e) {
+      // the chosen device is gone, or Chrome's preferred input is missing: try any mic once
+      if (e.name !== "NotFoundError" && e.name !== "OverconstrainedError") throw e;
+      stream = await md.getUserMedia({ audio: true });
+      if (id) { $("mic").value = ""; store("mic", ""); }
+    }
+    state.stream = stream;
+    attach(ctx.createMediaStreamSource(stream), false);
     $("start").textContent = "Stop";
+    refreshMics();   // names are available now
   } catch (e) {
-    $("msg").textContent = "Couldn't open the microphone (" + e.name + "). Allow mic access, or serve this file " +
-      "from localhost or GitHub Pages instead of opening it directly.";
+    let text = micErrorText(e);
+    if (e.name === "NotFoundError") {
+      const devs = await refreshMics();
+      if (devs.length === 0) text = "Chrome sees no microphone on this computer. " + text;
+    }
+    $("msg").textContent = text;
   }
 }
 
@@ -598,6 +661,13 @@ function draw() {
 }
 
 initControls();
+refreshMics();
+$("mic").addEventListener("change", () => {
+  store("mic", $("mic").value);
+  if (state.running && !state.demo) { stopSource(); startMic(); }
+});
+if (navigator.mediaDevices && navigator.mediaDevices.addEventListener)
+  navigator.mediaDevices.addEventListener("devicechange", refreshMics);
 $("start").onclick = startMic;
 $("demo").onclick = startDemo;
 $("sa").onclick = playSa;
