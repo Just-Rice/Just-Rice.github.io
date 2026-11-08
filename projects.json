@@ -146,12 +146,30 @@
       "updated": "2026-10-30T04:59:57Z"
     },
     {
+      "repo": "food-log",
+      "name": "Food Log",
+      "kind": "Data",
+      "category": "tools",
+      "color": "#3E9E6E",
+      "blurb": "A food diary on Food is Medicine's USDA data: log a meal by search or photo, measure portions to firm up the estimate, and see the day against your own vitamin and mineral needs.",
+      "stack": [
+        "USDA data",
+        "Vanilla JS",
+        "Gemini"
+      ],
+      "action": "Open",
+      "image": "img/food-log.webp",
+      "live": true,
+      "added": "2026-11-08",
+      "updated": "2026-11-08T00:00:00Z"
+    },
+    {
       "repo": "food-is-medicine",
       "name": "Food is Medicine",
       "kind": "Data",
       "category": "tools",
       "color": "#4E9B5B",
-      "blurb": "Nutrition for 1,002 foods from USDA FoodData Central, measured against your own needs, plus an honestly graded guide to medicinal herbs.",
+      "blurb": "Nutrition for 1,067 foods from USDA FoodData Central, measured against your own needs, plus an honestly graded guide to medicinal herbs.",
       "stack": [
         "USDA data",
         "Vanilla JS"
