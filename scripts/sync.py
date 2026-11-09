@@ -29,13 +29,20 @@ PALETTE = ["#F2B01E", "#E2603A", "#D94F8A", "#2F8A5B", "#B4682A", "#7C5CD6",
 
 
 def fetch_repos():
-    req = urllib.request.Request(
-        f"https://api.github.com/users/{OWNER}/repos?per_page=100&type=owner",
-        headers={"Accept": "application/vnd.github+json", "User-Agent": "just-rice-home-sync"})
-    if os.environ.get("GITHUB_TOKEN"):
-        req.add_header("Authorization", f"Bearer {os.environ['GITHUB_TOKEN']}")
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.load(r)
+    # GitHub hands back at most 100 repos a page, so keep asking until a page comes back short.
+    repos, page = [], 1
+    while True:
+        req = urllib.request.Request(
+            f"https://api.github.com/users/{OWNER}/repos?per_page=100&type=owner&page={page}",
+            headers={"Accept": "application/vnd.github+json", "User-Agent": "just-rice-home-sync"})
+        if os.environ.get("GITHUB_TOKEN"):
+            req.add_header("Authorization", f"Bearer {os.environ['GITHUB_TOKEN']}")
+        with urllib.request.urlopen(req, timeout=30) as r:
+            batch = json.load(r)
+        repos += batch
+        if len(batch) < 100:
+            return repos
+        page += 1
 
 
 def is_redirect(r):
