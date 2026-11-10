@@ -1,7 +1,9 @@
 #!/usr/bin/env python3
 """Bring projects.json up to date with the Just-Rice repos on GitHub, then rebuild.
 
-- Refreshes each project's "added" and "updated" dates from GitHub.
+- Refreshes each project's "added" and "updated" dates from GitHub. "Updated" is
+  the last commit on the repo's default branch, so pushing a side branch or
+  opening a pull request doesn't make a project look freshly updated.
 - Adds any public repo that has GitHub Pages switched on (or the just-rice-home
   topic) and isn't listed yet, using its GitHub description, website and topics.
 - Leaves out forks, archived repos, redirect-only repos (topic "redirect" or a
@@ -50,6 +52,25 @@ def wanted(r):
             and "hide-from-home" not in topics and not is_redirect(r))
 
 
+def last_update(r):
+    """When the repo's default branch last changed.
+
+    GitHub's pushed_at moves on a push to any branch, pull-request branches
+    included, so it is only the fallback for when the commit can't be read
+    (an empty repo, or the API's rate limit).
+    """
+    req = urllib.request.Request(
+        f"https://api.github.com/repos/{OWNER}/{r['name']}/commits?per_page=1",
+        headers={"Accept": "application/vnd.github+json", "User-Agent": "just-rice-home-sync"})
+    if os.environ.get("GITHUB_TOKEN"):
+        req.add_header("Authorization", f"Bearer {os.environ['GITHUB_TOKEN']}")
+    try:
+        with urllib.request.urlopen(req, timeout=30) as resp:
+            return json.load(resp)[0]["commit"]["committer"]["date"]
+    except (OSError, ValueError, LookupError, TypeError):
+        return r["pushed_at"]
+
+
 def guess_category(topics):
     t = set(topics)
     if t & {"game", "games", "browser-game", "board-game"}:
@@ -94,7 +115,7 @@ def sync(dry_run=False):
         if not r:
             changes.append(f"warning: {p['repo']} is not a public repo any more (left as is)")
             continue
-        for key, value in (("added", r["created_at"][:10]), ("updated", r["pushed_at"])):
+        for key, value in (("added", r["created_at"][:10]), ("updated", last_update(r))):
             if p.get(key) != value:
                 changes.append(f"{p['repo']}: {key} {p.get(key)} -> {value}")
                 p[key] = value
@@ -105,7 +126,7 @@ def sync(dry_run=False):
         if name in listed or name in skip or not wanted(r):
             continue
         entry = new_entry(r, used)
-        entry["added"], entry["updated"] = r["created_at"][:10], r["pushed_at"]
+        entry["added"], entry["updated"] = r["created_at"][:10], last_update(r)
         used.add(entry["color"])
         projects.append(entry)
         changes.append(f"added new project: {r['name']}")
