@@ -2,137 +2,331 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Swara Pitch Graph</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Swara Pitch Graph · Swarantara</title>
+<meta name="theme-color" content="#5b1010">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"%3E %3Crect width="64" height="64" rx="14" fill="%235b1010"/%3E %3Ccircle cx="32" cy="32" r="25" fill="none" stroke="%23e0a526" stroke-width="2"/%3E %3Cg fill="%23e0a526" transform="translate%2832 32%29"%3E %3Cpath id="p" d="M0-20c4 5 4 11 0 15c-4-4-4-10 0-15z"/%3E %3Cuse href="%23p" transform="rotate%2845%29"/%3E%3Cuse href="%23p" transform="rotate%2890%29"/%3E%3Cuse href="%23p" transform="rotate%28135%29"/%3E %3Cuse href="%23p" transform="rotate%28180%29"/%3E%3Cuse href="%23p" transform="rotate%28225%29"/%3E%3Cuse href="%23p" transform="rotate%28270%29"/%3E%3Cuse href="%23p" transform="rotate%28315%29"/%3E %3Ccircle r="4.5" fill="%23a3191c" stroke="%23e0a526" stroke-width="1.5"/%3E %3C/g%3E %3Cg fill="%23e0a526"%3E%3Ccircle cx="32" cy="3.5" r="1.5"/%3E%3Ccircle cx="32" cy="60.5" r="1.5"/%3E%3Ccircle cx="3.5" cy="32" r="1.5"/%3E%3Ccircle cx="60.5" cy="32" r="1.5"/%3E%3C/g%3E %3C/svg%3E">
 <!--
   Swara Pitch Graph - live pitch-time graph for Carnatic singing.
   One file, no libraries. Open in Chrome/Edge/Safari, press Start, allow the mic.
   If the browser refuses the mic from a local file, serve the folder:
       python3 -m http.server   then open http://localhost:8000/swara_graph.html
   (or host it on GitHub Pages).
+  Styled to match Swarantara (sandalwood, temple maroon, kumkum and turmeric gold,
+  Tiro Devanagari Sanskrit headings). The font loads from Google Fonts when online;
+  offline it falls back to Georgia / the system serif and everything still works.
 -->
+<script>
+  // Apply a saved theme before the page paints.
+  try { var t = localStorage.getItem("swaraGraph.theme"); if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t); } catch (e) {}
+</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Tiro+Devanagari+Sanskrit&display=swap">
 <style>
+  /* ---------- Colour tokens (Swarantara palette) ---------- */
   :root {
-    --bg: #f7f6f2; --panel: #ffffff; --text: #1d1d1b; --muted: #6b6b66;
-    --line: #dcdad3; --grid: #c9c6bd; --gridraga: #8a8578;
-    --ok: #1f8a4c; --warn: #c27c0e; --bad: #c93a32; --accent: #3557c4;
-    --trace: #1d1d1b;
+    --bg: #f7ecd6;          /* sandalwood */
+    --paper: #fffaf0;
+    --surface-2: #f3e1bb;
+    --text: #2b140e;
+    --muted: #6a4636;
+    --line: #d9bb86;
+    --kumkum: #a3191c;      /* kumkum red */
+    --maroon: #5b1010;      /* temple maroon */
+    --gold: #7a5100;        /* turmeric gold, dark enough for text */
+    --gold-bright: #e0a526; /* turmeric, for ornaments */
+    --on-accent: #fff8e6;
+    --head-bg: #5b1010;
+    --head-text: #fbe6b6;
+    --leaf: #2f6b3a; --marigold: #e0a526; --marigold-2: #d9661a;
+    --dot: rgba(138, 93, 0, 0.12);
+    --shadow: 0 2px 8px rgba(60, 25, 10, .10);
+    --focus: #8f1418;
+    /* graph */
+    --grid: #e3cfa6; --gridraga: #b08a4a; --band: #1e7a46;
+    /* traffic light: kept distinct from the kumkum accent and readable on paper */
+    --ok: #1e7a46; --warn: #b36b00; --bad: #c62828;
+    --lamp-off: .2;
+    --font-head: "Tiro Devanagari Sanskrit", "Noto Serif Devanagari", "Devanagari Sangam MN", "Noto Serif", Georgia, serif;
+    --font-body: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+    --radius: 16px;
+    color-scheme: light;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
-      --bg: #151514; --panel: #1f1f1d; --text: #ecebe6; --muted: #9b9a93;
-      --line: #34332f; --grid: #3a3934; --gridraga: #7d796d;
-      --ok: #3fbf74; --warn: #e3a33a; --bad: #ef6a60; --accent: #7d98ff;
-      --trace: #ecebe6;
+      --bg: #150b08; --paper: #22120e; --surface-2: #301b14; --text: #f8e9d3; --muted: #d2b398;
+      --line: #5d3b27; --kumkum: #f0705f; --maroon: #f3b5a0; --gold: #eabb4c; --gold-bright: #f2c75c;
+      --on-accent: #1c0b07; --head-bg: #2a0e0a; --head-text: #f6d58c; --leaf: #5aa865;
+      --dot: rgba(234, 187, 76, 0.07); --shadow: 0 2px 10px rgba(0, 0, 0, .4); --focus: #f2c75c;
+      --grid: #3d2619; --gridraga: #8a6a3a; --band: #5fd08f;
+      --ok: #5fd08f; --warn: #f2b33d; --bad: #ff7466; --lamp-off: .16;
+      color-scheme: dark;
     }
   }
   :root[data-theme="dark"] {
-    --bg: #151514; --panel: #1f1f1d; --text: #ecebe6; --muted: #9b9a93;
-    --line: #34332f; --grid: #3a3934; --gridraga: #7d796d;
-    --ok: #3fbf74; --warn: #e3a33a; --bad: #ef6a60; --accent: #7d98ff;
-    --trace: #ecebe6;
+    --bg: #150b08; --paper: #22120e; --surface-2: #301b14; --text: #f8e9d3; --muted: #d2b398;
+    --line: #5d3b27; --kumkum: #f0705f; --maroon: #f3b5a0; --gold: #eabb4c; --gold-bright: #f2c75c;
+    --on-accent: #1c0b07; --head-bg: #2a0e0a; --head-text: #f6d58c; --leaf: #5aa865;
+    --dot: rgba(234, 187, 76, 0.07); --shadow: 0 2px 10px rgba(0, 0, 0, .4); --focus: #f2c75c;
+    --grid: #3d2619; --gridraga: #8a6a3a; --band: #5fd08f;
+    --ok: #5fd08f; --warn: #f2b33d; --bad: #ff7466; --lamp-off: .16;
+    color-scheme: dark;
   }
-  * { box-sizing: border-box; }
-  html, body { margin: 0; background: var(--bg); color: var(--text);
-    font: 15px/1.4 system-ui, -apple-system, "Segoe UI", sans-serif; }
-  main { max-width: 1100px; margin: 0 auto; padding: 16px; }
-  h1 { font-size: 20px; margin: 0 0 4px; }
-  .sub { color: var(--muted); margin: 0 0 14px; font-size: 13px; }
-  .controls { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: end;
-    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 12px; }
-  label { display: flex; flex-direction: column; gap: 4px; font-size: 12px; color: var(--muted); }
-  select, input, button { font: inherit; color: var(--text); background: var(--bg);
-    border: 1px solid var(--line); border-radius: 7px; padding: 6px 8px; }
-  input[type=number] { width: 90px; }
-  input[type=range] { padding: 0; }
-  button { cursor: pointer; }
-  button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
-  .row { display: flex; gap: 6px; }
-  .readout { display: flex; align-items: center; justify-content: center; gap: 28px; margin: 12px 0;
-    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 16px; }
-  .light { display: flex; flex-direction: column; gap: 8px; background: #222; border-radius: 14px; padding: 10px; }
-  .lamp { width: 34px; height: 34px; border-radius: 50%; opacity: .18; }
-  .lamp.r { background: var(--bad); } .lamp.y { background: var(--warn); } .lamp.g { background: var(--ok); }
-  .lamp.on { opacity: 1; box-shadow: 0 0 16px currentColor; }
-  .lamp.r.on { color: var(--bad); } .lamp.y.on { color: var(--warn); } .lamp.g.on { color: var(--ok); }
+
+  /* ---------- Base ---------- */
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; background: var(--bg); }
+  body {
+    margin: 0;
+    background-color: var(--bg);
+    background-image: radial-gradient(circle, var(--dot) 1.2px, transparent 1.6px);
+    background-size: 22px 22px;
+    color: var(--text);
+    font: 1rem/1.55 var(--font-body);
+    overflow-x: hidden;
+  }
+  [lang="sa"] { font-family: var(--font-head); }
+  h1, h2, h3 { font-family: var(--font-head); font-weight: 400; line-height: 1.25; margin: 0 0 .5em; }
+  p { margin: 0 0 .75em; }
+  button, input, select { font: inherit; color: inherit; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+
+  /* ---------- Ornaments (masks, so they take any colour) ---------- */
+  .kolam {
+    height: 20px;
+    background-color: var(--gold-bright);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.4'%3E%3Cpath d='M0 10C6 0 14 0 20 10S34 20 40 10'/%3E%3Cpath d='M0 10C6 20 14 20 20 10S34 0 40 10'/%3E%3C/g%3E%3Ccircle cx='10' cy='10' r='1.7'/%3E%3Ccircle cx='30' cy='10' r='1.7'/%3E%3C/svg%3E") repeat-x center / 40px 20px;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='20' viewBox='0 0 40 20'%3E%3Cg fill='none' stroke='%23000' stroke-width='1.4'%3E%3Cpath d='M0 10C6 0 14 0 20 10S34 20 40 10'/%3E%3Cpath d='M0 10C6 20 14 20 20 10S34 0 40 10'/%3E%3C/g%3E%3Ccircle cx='10' cy='10' r='1.7'/%3E%3Ccircle cx='30' cy='10' r='1.7'/%3E%3C/svg%3E") repeat-x center / 40px 20px;
+  }
+  .toran { position: relative; height: 30px; border-top: 1.5px solid var(--gold); }
+  .toran span { position: absolute; inset: 0; -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x; -webkit-mask-size: 100px 30px; mask-size: 100px 30px; -webkit-mask-position: center top; mask-position: center top; }
+  .toran .t-leaves { background: var(--leaf); -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='30' viewBox='0 0 100 30'%3E%3Cpath d='M25 3c-6 8-5 16 0 23 5-7 6-15 0-23zM75 3c-6 8-5 16 0 23 5-7 6-15 0-23z'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='30' viewBox='0 0 100 30'%3E%3Cpath d='M25 3c-6 8-5 16 0 23 5-7 6-15 0-23zM75 3c-6 8-5 16 0 23 5-7 6-15 0-23z'/%3E%3C/svg%3E"); }
+  .toran .t-fl1 { background: var(--marigold); -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='30' viewBox='0 0 100 30'%3E%3Ccircle cx='50' cy='9' r='5.5'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='30' viewBox='0 0 100 30'%3E%3Ccircle cx='50' cy='9' r='5.5'/%3E%3C/svg%3E"); }
+  .toran .t-fl2 { background: var(--marigold-2); -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='30' viewBox='0 0 100 30'%3E%3Ccircle cx='0' cy='9' r='5.5'/%3E%3Ccircle cx='100' cy='9' r='5.5'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='100' height='30' viewBox='0 0 100 30'%3E%3Ccircle cx='0' cy='9' r='5.5'/%3E%3Ccircle cx='100' cy='9' r='5.5'/%3E%3C/svg%3E"); }
+
+  /* ---------- Header ---------- */
+  .masthead {
+    background: radial-gradient(120% 140% at 50% -20%, rgba(224, 165, 38, .22), transparent 60%), var(--head-bg);
+    color: var(--head-text);
+    padding: max(12px, env(safe-area-inset-top)) 16px 0;
+    text-align: center;
+  }
+  .bar { max-width: 68rem; margin: 0 auto; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 12px; }
+  .brand { display: flex; align-items: center; gap: 10px; text-align: left; }
+  .brand svg { flex: none; }
+  .brand-text { display: flex; flex-direction: column; line-height: 1.1; }
+  .brand-dev { font-size: 1.6rem; }
+  .brand-lat { font-family: var(--font-head); letter-spacing: .28em; font-size: .78rem; opacity: .9; }
+  .tagline { font-family: var(--font-head); margin: 10px auto 8px; max-width: 44rem; font-size: 1.05rem; opacity: .95; }
+  .masthead .kolam { margin: 0 -16px; }
+  .icon-btn {
+    display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 6px 14px;
+    border-radius: 999px; border: 1.5px solid currentColor; background: transparent; color: inherit; cursor: pointer; font-size: .9rem;
+  }
+  .icon-btn:hover { background: rgba(255, 255, 255, .08); }
+  .masthead :focus-visible { outline-color: var(--head-text); }
+
+  /* ---------- Layout ---------- */
+  main { max-width: 68rem; margin: 0 auto; padding: 4px 16px 24px; }
+  .card {
+    position: relative;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    box-shadow: inset 0 0 0 5px var(--paper), inset 0 0 0 6.5px var(--line), var(--shadow);
+    padding: 34px 18px 30px;
+    margin: 18px 0;
+    min-width: 0;
+  }
+  .card > .corners { position: absolute; inset: 8px; pointer-events: none; }
+  .card > .corners::before, .card > .corners::after { content: ""; position: absolute; left: 0; right: 0; height: 30px; background: var(--gold-bright); }
+  .card > .corners::before { top: 0; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cg transform='translate(0 0)'%3E%3Cpath d='M3 31V12A9 9 0 0 1 12 3h19' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M9 20c0-7 4-11 11-11-1 6-5 10-11 11z'/%3E%3Ccircle cx='22.5' cy='20.5' r='2'/%3E%3C/g%3E%3C/svg%3E") left top / 30px 30px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cg transform='translate(34 0) scale(-1 1)'%3E%3Cpath d='M3 31V12A9 9 0 0 1 12 3h19' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M9 20c0-7 4-11 11-11-1 6-5 10-11 11z'/%3E%3Ccircle cx='22.5' cy='20.5' r='2'/%3E%3C/g%3E%3C/svg%3E") right top / 30px 30px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cg transform='translate(0 0)'%3E%3Cpath d='M3 31V12A9 9 0 0 1 12 3h19' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M9 20c0-7 4-11 11-11-1 6-5 10-11 11z'/%3E%3Ccircle cx='22.5' cy='20.5' r='2'/%3E%3C/g%3E%3C/svg%3E") left top / 30px 30px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cg transform='translate(34 0) scale(-1 1)'%3E%3Cpath d='M3 31V12A9 9 0 0 1 12 3h19' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M9 20c0-7 4-11 11-11-1 6-5 10-11 11z'/%3E%3Ccircle cx='22.5' cy='20.5' r='2'/%3E%3C/g%3E%3C/svg%3E") right top / 30px 30px no-repeat; }
+  .card > .corners::after { bottom: 0; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cg transform='translate(0 34) scale(1 -1)'%3E%3Cpath d='M3 31V12A9 9 0 0 1 12 3h19' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M9 20c0-7 4-11 11-11-1 6-5 10-11 11z'/%3E%3Ccircle cx='22.5' cy='20.5' r='2'/%3E%3C/g%3E%3C/svg%3E") left bottom / 30px 30px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cg transform='translate(34 34) scale(-1 -1)'%3E%3Cpath d='M3 31V12A9 9 0 0 1 12 3h19' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M9 20c0-7 4-11 11-11-1 6-5 10-11 11z'/%3E%3Ccircle cx='22.5' cy='20.5' r='2'/%3E%3C/g%3E%3C/svg%3E") right bottom / 30px 30px no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cg transform='translate(0 34) scale(1 -1)'%3E%3Cpath d='M3 31V12A9 9 0 0 1 12 3h19' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M9 20c0-7 4-11 11-11-1 6-5 10-11 11z'/%3E%3Ccircle cx='22.5' cy='20.5' r='2'/%3E%3C/g%3E%3C/svg%3E") left bottom / 30px 30px no-repeat, url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='34' height='34' viewBox='0 0 34 34'%3E%3Cg transform='translate(34 34) scale(-1 -1)'%3E%3Cpath d='M3 31V12A9 9 0 0 1 12 3h19' fill='none' stroke='%23000' stroke-width='1.6'/%3E%3Cpath d='M9 20c0-7 4-11 11-11-1 6-5 10-11 11z'/%3E%3Ccircle cx='22.5' cy='20.5' r='2'/%3E%3C/g%3E%3C/svg%3E") right bottom / 30px 30px no-repeat; }
+  h2.ornate { color: var(--kumkum); font-size: 1.45rem; display: flex; align-items: center; gap: 10px; }
+  h2.ornate::before {
+    content: ""; flex: none; width: 22px; height: 22px; background: var(--gold-bright);
+    -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2c1.8 3 1.8 6 0 9-1.8-3-1.8-6 0-9Zm0 21c-1.8-3-1.8-6 0-9 1.8 3 1.8 6 0 9ZM2 12c3-1.8 6-1.8 9 0-3 1.8-6 1.8-9 0Zm21 0c-3 1.8-6 1.8-9 0 3-1.8 6-1.8 9 0ZM4.9 4.9c3.4.8 5.5 2.9 6.3 6.3-3.4-.8-5.5-2.9-6.3-6.3Zm14.2 14.2c-3.4-.8-5.5-2.9-6.3-6.3 3.4.8 5.5 2.9 6.3 6.3Zm0-14.2c-.8 3.4-2.9 5.5-6.3 6.3.8-3.4 2.9-5.5 6.3-6.3ZM4.9 19.1c.8-3.4 2.9-5.5 6.3-6.3-.8 3.4-2.9 5.5-6.3 6.3Z'/%3E%3C/svg%3E") center / contain no-repeat;
+            mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 2c1.8 3 1.8 6 0 9-1.8-3-1.8-6 0-9Zm0 21c-1.8-3-1.8-6 0-9 1.8 3 1.8 6 0 9ZM2 12c3-1.8 6-1.8 9 0-3 1.8-6 1.8-9 0Zm21 0c-3 1.8-6 1.8-9 0 3-1.8 6-1.8 9 0ZM4.9 4.9c3.4.8 5.5 2.9 6.3 6.3-3.4-.8-5.5-2.9-6.3-6.3Zm14.2 14.2c-3.4-.8-5.5-2.9-6.3-6.3 3.4.8 5.5 2.9 6.3 6.3Zm0-14.2c-.8 3.4-2.9 5.5-6.3 6.3.8-3.4 2.9-5.5 6.3-6.3ZM4.9 19.1c.8-3.4 2.9-5.5 6.3-6.3-.8 3.4-2.9 5.5-6.3 6.3Z'/%3E%3C/svg%3E") center / contain no-repeat;
+  }
+  .lotus-divider { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 6px auto; color: var(--gold-bright); }
+  .lotus-divider span { width: min(110px, 28vw); height: 1.5px; background: linear-gradient(90deg, transparent, currentColor); }
+  .lotus-divider span:last-child { background: linear-gradient(90deg, currentColor, transparent); }
+  .lotus-divider svg { flex: none; }
+
+  /* ---------- Controls ---------- */
+  .controls { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 13.5rem), 1fr)); gap: 14px 16px; align-items: end; }
+  .controls label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: .92rem; min-width: 0; }
+  .controls label .hint { font-weight: 400; color: var(--muted); }
+  select, input[type=number] {
+    min-height: 46px; padding: 8px 12px; border-radius: 12px; width: 100%; min-width: 0;
+    border: 1.5px solid var(--line); background: var(--bg); color: var(--text);
+  }
+  select:hover, input[type=number]:hover { border-color: var(--gold); }
+  select:focus-visible, input:focus-visible { border-color: var(--gold); }
+  input[type=range] { width: 100%; height: 46px; margin: 0; accent-color: var(--kumkum); }
+  #tolv { color: var(--kumkum); font-variant-numeric: tabular-nums; }
+  .row { display: flex; gap: 8px; }
+  .row select { flex: 1; }
+  .row #oct { flex: 0 0 4.6rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; padding-top: 16px; border-top: 1.5px dashed var(--line); }
+  button {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 46px; padding: 8px 18px; border-radius: 12px; cursor: pointer; font-weight: 600;
+    border: 1.5px solid var(--line); background: var(--paper); color: var(--text);
+  }
+  button:hover { border-color: var(--gold); }
+  button.primary { background: var(--kumkum); border-color: var(--kumkum); color: var(--on-accent); min-width: 9.5rem; }
+  button.primary:hover { filter: brightness(1.08); }
+  button.small { min-height: 40px; padding: 6px 14px; font-size: .9rem; }
+  .msg { color: var(--kumkum); font-weight: 600; margin: 10px 0 0; }
+  .msg:empty { display: none; }
+  .msg:not(:empty) { background: var(--surface-2); border-left: 4px solid var(--kumkum); padding: 10px 14px; border-radius: 8px; }
+
+  /* ---------- Readout ---------- */
+  .readout { display: flex; align-items: center; justify-content: center; gap: clamp(18px, 5vw, 44px); padding-left: 18px; padding-right: 18px; }
+  .light {
+    display: flex; flex-direction: column; gap: 10px; padding: 12px 10px; border-radius: 999px;
+    background: linear-gradient(180deg, #3a1210, #1c0807);
+    box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--gold-bright), 0 6px 16px rgba(40, 10, 5, .35);
+  }
+  .lamp { width: 38px; height: 38px; border-radius: 50%; opacity: var(--lamp-off); transition: opacity .12s ease, box-shadow .12s ease; }
+  .lamp.r { background: radial-gradient(circle at 35% 30%, #ff9a8f, #d32f2f 60%); }
+  .lamp.y { background: radial-gradient(circle at 35% 30%, #ffe08a, #f0a500 60%); }
+  .lamp.g { background: radial-gradient(circle at 35% 30%, #a6f0c2, #22a35a 60%); }
+  .lamp.on { opacity: 1; }
+  .lamp.r.on { box-shadow: 0 0 18px 2px #ff5a4a; }
+  .lamp.y.on { box-shadow: 0 0 18px 2px #ffc23a; }
+  .lamp.g.on { box-shadow: 0 0 18px 2px #3fd47d; }
   .big { text-align: center; min-width: 0; }
-  #rCents { font-size: 96px; font-weight: 750; line-height: 1; font-variant-numeric: tabular-nums; }
-  #rVerdict { font-size: 26px; font-weight: 700; margin-top: 6px; letter-spacing: .02em; }
-  .ok { color: var(--ok); } .warn { color: var(--warn); } .bad { color: var(--bad); }
-  .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
-  .card .k { font-size: 12px; color: var(--muted); }
-  .card .v { font-size: 28px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .v.ok { color: var(--ok); } .v.warn { color: var(--warn); } .v.bad { color: var(--bad); }
-  .graphwrap { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px; }
+  .big .eyebrow { display: block; text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
+  #rCents { font-size: clamp(64px, 14vw, 112px); font-weight: 750; line-height: 1; font-variant-numeric: tabular-nums; color: var(--maroon); }
+  #rVerdict { font-family: var(--font-head); font-size: clamp(20px, 4.4vw, 30px); margin-top: 8px; letter-spacing: .06em; color: var(--muted); }
+  #rCents.ok, #rVerdict.ok { color: var(--ok); }
+  #rCents.warn, #rVerdict.warn { color: var(--warn); }
+  #rCents.bad, #rVerdict.bad { color: var(--bad); }
+  #rVerdict.ok, #rVerdict.warn, #rVerdict.bad { font-family: var(--font-body); font-weight: 700; letter-spacing: .04em; }
+
+  /* ---------- Graph ---------- */
+  .graphwrap { border: 1.5px solid var(--line); border-radius: 12px; background: var(--bg); padding: 6px; }
   canvas { display: block; width: 100%; height: 420px; }
-  .scale { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
-  .scale b { color: var(--text); font-weight: 600; }
-  .stats { margin-top: 10px; font-size: 13px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 6px 16px; align-items: center; }
-  .legend span { display: inline-flex; align-items: center; gap: 5px; margin-right: 12px; }
-  .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
-  .msg { color: var(--bad); font-size: 13px; margin-top: 8px; min-height: 1em; }
-  @media (max-width: 640px) {
-    .readout { gap: 16px; }
-    #rCents { font-size: 64px; } #rVerdict { font-size: 20px; }
-    .lamp { width: 26px; height: 26px; }
-    canvas { height: 320px; }
+  .stats { margin-top: 14px; color: var(--muted); display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; font-size: .92rem; }
+  #stats { flex: 1 1 16rem; color: var(--text); font-weight: 600; }
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; width: 100%; }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .dot { width: 12px; height: 12px; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 2px var(--paper), 0 0 0 3px var(--line); }
+  .scale { margin: 14px 0 0; background: var(--surface-2); border-left: 4px solid var(--gold-bright); padding: 10px 14px; border-radius: 8px; font-size: .95rem; color: var(--muted); }
+  .scale b { color: var(--maroon); font-family: var(--font-head); font-weight: 400; font-size: 1.15rem; }
+  .scale:empty { display: none; }
+
+  /* ---------- Footer ---------- */
+  .foot { text-align: center; padding: 0 16px max(24px, env(safe-area-inset-bottom)); color: var(--muted); font-size: .9rem; }
+  .foot .tanpura-art { display: block; margin: 8px auto 0; width: min(300px, 86%); height: auto; color: var(--gold); }
+  .foot .tanpura-art .accent { color: var(--kumkum); }
+  .foot .kolam { margin: 10px auto 14px; max-width: 68rem; }
+
+  @media (min-width: 720px) {
+    .card { padding: 38px 30px 32px; }
+    .masthead { padding-left: 24px; padding-right: 24px; }
+    .masthead .kolam { margin: 0 -24px; }
   }
+  @media (max-width: 640px) {
+    .lamp { width: 28px; height: 28px; }
+    .light { gap: 8px; padding: 10px 8px; }
+    canvas { height: 320px; }
+    .card { padding-left: 14px; padding-right: 14px; }
+    .brand-dev { font-size: 1.35rem; }
+    .icon-btn .label { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
 </style>
 </head>
 <body>
-<main>
-  <h1>Swara Pitch Graph</h1>
-  <p class="sub">Sing into the mic. The line is your pitch; the horizontal lines are the swaras of the raga, measured from your shruti (Sa).</p>
-
-  <div class="controls">
-    <label>Shruti (Sa)
-      <span class="row">
-        <select id="note"></select>
-        <select id="oct"><option>2</option><option selected>3</option><option>4</option></select>
+<header class="masthead">
+  <div class="bar">
+    <div class="brand">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="44" height="44" aria-hidden="true"> <rect width="64" height="64" rx="14" fill="#5b1010"/> <circle cx="32" cy="32" r="25" fill="none" stroke="#e0a526" stroke-width="2"/> <g fill="#e0a526" transform="translate(32 32)"> <path id="p" d="M0-20c4 5 4 11 0 15c-4-4-4-10 0-15z"/> <use href="#p" transform="rotate(45)"/><use href="#p" transform="rotate(90)"/><use href="#p" transform="rotate(135)"/> <use href="#p" transform="rotate(180)"/><use href="#p" transform="rotate(225)"/><use href="#p" transform="rotate(270)"/><use href="#p" transform="rotate(315)"/> <circle r="4.5" fill="#a3191c" stroke="#e0a526" stroke-width="1.5"/> </g> <g fill="#e0a526"><circle cx="32" cy="3.5" r="1.5"/><circle cx="32" cy="60.5" r="1.5"/><circle cx="3.5" cy="32" r="1.5"/><circle cx="60.5" cy="32" r="1.5"/></g></svg>
+      <span class="brand-text">
+        <span class="brand-dev" lang="sa">स्वर</span>
+        <span class="brand-lat">SWARA PITCH GRAPH</span>
       </span>
-    </label>
-    <label>or Sa in Hz
-      <input id="hz" type="number" min="50" max="1000" step="0.01">
-    </label>
-    <label>Raga
-      <select id="raga"></select>
-    </label>
-    <label>Tuning
-      <select id="tuning"><option value="et">Equal temperament</option><option value="just">Just intonation</option></select>
-    </label>
-    <label>In-tune band: <span id="tolv">±20</span> cents
-      <input id="tol" type="range" min="5" max="50" step="1" value="20">
-    </label>
-    <label>Microphone
-      <select id="mic" title="Which input to listen to"><option value="">Default mic</option></select>
-    </label>
-    <span class="row">
+    </div>
+    <button id="theme" class="icon-btn" type="button" title="Switch light or dark">
+      <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 3a9 9 0 1 0 0 18 9 9 0 0 0 0-18Zm0 2v14a7 7 0 0 1 0-14Z"/></svg>
+      <span class="label" id="themeLabel">Theme: auto</span>
+    </button>
+  </div>
+  <p class="tagline">Sing into the mic. The line is your pitch; the lines across are the swaras of the raga, measured from your shruti (Sa).</p>
+  <div class="kolam" aria-hidden="true"></div>
+</header>
+<div class="toran" aria-hidden="true"><span class="t-leaves"></span><span class="t-fl1"></span><span class="t-fl2"></span></div>
+
+<main>
+  <section class="card" aria-labelledby="setTitle">
+    <span class="corners" aria-hidden="true"></span>
+    <h2 id="setTitle" class="ornate">Shruti and raga</h2>
+    <div class="controls">
+      <label>Shruti (Sa)
+        <span class="row">
+          <select id="note" aria-label="Sa note"></select>
+          <select id="oct" aria-label="Octave"><option>2</option><option selected>3</option><option>4</option></select>
+        </span>
+      </label>
+      <label>or Sa in Hz
+        <input id="hz" type="number" min="50" max="1000" step="0.01">
+      </label>
+      <label>Raga
+        <select id="raga"></select>
+      </label>
+      <label>Tuning
+        <select id="tuning"><option value="et">Equal temperament</option><option value="just">Just intonation</option></select>
+      </label>
+      <label>In-tune band <span class="hint"><span id="tolv">±20</span> cents</span>
+        <input id="tol" type="range" min="5" max="50" step="1" value="20">
+      </label>
+      <label>Microphone
+        <select id="mic" title="Which input to listen to"><option value="">Default mic</option></select>
+      </label>
+    </div>
+    <div class="actions">
       <button id="start" class="primary">Start mic</button>
       <button id="demo" title="Plays a synthetic voice through the graph, no mic needed">Demo</button>
       <button id="sa" title="Play the shruti as a reference tone">Play Sa</button>
-    </span>
-  </div>
-  <div class="msg" id="msg"></div>
+    </div>
+    <div class="msg" id="msg" role="alert"></div>
+  </section>
 
-  <div class="readout">
+  <section class="card readout" aria-label="Current note">
+    <span class="corners" aria-hidden="true"></span>
     <div class="light" aria-hidden="true"><i class="lamp r" id="lR"></i><i class="lamp y" id="lY"></i><i class="lamp g" id="lG"></i></div>
-    <div class="big"><div id="rCents">–</div><div id="rVerdict">listening</div></div>
-  </div>
+    <div class="big" aria-live="polite"><span class="eyebrow">Cents from the swara</span><div id="rCents">–</div><div id="rVerdict">listening</div></div>
+  </section>
 
-  <div class="graphwrap"><canvas id="cv"></canvas></div>
+  <div class="lotus-divider" aria-hidden="true"><span></span><svg width="34" height="22" viewBox="0 0 34 22" fill="currentColor"><path d="M17 1c4 5 4 12 0 18-4-6-4-13 0-18zM17 19C12 18 7 14 5 7c6 1 10 6 12 12zM17 19c5-1 10-5 12-12-6 1-10 6-12 12zM3 15c4 0 9 2 14 4-5 1-10 0-14-4zM31 15c-4 0-9 2-14 4 5 1 10 0 14-4z"/></svg><span></span></div>
 
-  <div class="stats">
-    <span class="legend">
-      <span><i class="dot" style="background:var(--ok)"></i>in shruti</span>
-      <span><i class="dot" style="background:var(--warn)"></i>a little off</span>
-      <span><i class="dot" style="background:var(--bad)"></i>way off or not in raga</span>
-    </span>
-    <span id="stats">No steady notes yet.</span>
-    <button id="csv">Download results CSV</button>
-    <button id="clear">Clear</button>
-  </div>
-  <p class="scale" id="scale"></p>
+  <section class="card" aria-labelledby="graphTitle">
+    <span class="corners" aria-hidden="true"></span>
+    <h2 id="graphTitle" class="ornate">Pitch over time</h2>
+    <div class="graphwrap"><canvas id="cv"></canvas></div>
+    <div class="stats">
+      <span class="legend">
+        <span><i class="dot" style="background:var(--ok)"></i>in shruti</span>
+        <span><i class="dot" style="background:var(--warn)"></i>a little off</span>
+        <span><i class="dot" style="background:var(--bad)"></i>way off or not in raga</span>
+      </span>
+      <span id="stats">No steady notes yet.</span>
+      <button id="csv" class="small">Download results CSV</button>
+      <button id="clear" class="small">Clear</button>
+    </div>
+    <p class="scale" id="scale"></p>
+  </section>
 </main>
+
+<footer class="foot">
+  <svg class="tanpura-art" aria-hidden="true" viewBox="0 0 320 80" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M66 30c-4-14-18-22-34-20C14 12 4 26 4 42s12 30 30 31c17 1 30-8 33-21"/><path d="M18 30c6-6 16-6 22 0M14 44c4 10 18 14 28 8"/><path d="M66 32h208M66 50h208"/><path d="M274 30l14-6h22l4 6v22l-4 6h-22l-14-6z"/><path d="M290 24v-8M300 24v-8M290 58v8M300 58v8"/><circle cx="290" cy="13" r="3"/><circle cx="300" cy="13" r="3"/><circle cx="290" cy="69" r="3"/><circle cx="300" cy="69" r="3"/><path d="M26 37l-8 0M26 45l-8 0" stroke-width="2.4"/><path d="M22 36.5h260M22 39.5h260M22 42.5h260M22 45.5h260" stroke-width=".7"/><g class="accent"><path d="M118 32v18M178 32v18M236 32v18" stroke-width="1"/><circle cx="148" cy="41" r="2.5" fill="currentColor" stroke="none"/><circle cx="208" cy="41" r="2.5" fill="currentColor" stroke="none"/></g></svg>
+  <div class="kolam" aria-hidden="true"></div>
+  <p>Listening happens in your browser. Nothing is recorded or sent anywhere.</p>
+</footer>
 
 <script>
 // ==DSP==  (pure functions, no DOM; tested offline in Node)
@@ -623,7 +817,7 @@ function draw() {
   const left = 92, right = w - 8, top = 8, bottom = h - 22;
   const y = c => bottom - (c - LO) / (HI - LO) * (bottom - top);
   const raga = state.raga;
-  g.font = "12px system-ui, sans-serif";
+  g.font = "13px " + cssVar("--font-head");
   g.textBaseline = "middle";
   // swara gridlines
   for (let oct = -1; oct <= 1; oct++) {
@@ -694,6 +888,21 @@ $("csv").onclick = downloadCSV;
 $("clear").onclick = () => { state.tracker = new Tracker(); state.last = null; showReading(null); updateStats(); draw(); };
 window.addEventListener("resize", draw);
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", draw);
+// Theme button: auto -> light -> dark (saved on this device).
+(function () {
+  const order = ["auto", "light", "dark"];
+  const label = () => { const t = document.documentElement.getAttribute("data-theme") || "auto"; $("themeLabel").textContent = "Theme: " + t; };
+  label();
+  $("theme").onclick = () => {
+    const cur = document.documentElement.getAttribute("data-theme") || "auto";
+    const next = order[(order.indexOf(cur) + 1) % order.length];
+    if (next === "auto") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", next);
+    try { localStorage.setItem("swaraGraph.theme", next); } catch (e) {}
+    label(); draw();
+  };
+})();
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw);
 </script>
 </body>
 </html>
