@@ -48,7 +48,17 @@
   button { cursor: pointer; }
   button.primary { background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
   .row { display: flex; gap: 6px; }
-  .readout { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 12px 0; }
+  .readout { display: flex; align-items: center; justify-content: center; gap: 28px; margin: 12px 0;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 18px 16px; }
+  .light { display: flex; flex-direction: column; gap: 8px; background: #222; border-radius: 14px; padding: 10px; }
+  .lamp { width: 34px; height: 34px; border-radius: 50%; opacity: .18; }
+  .lamp.r { background: var(--bad); } .lamp.y { background: var(--warn); } .lamp.g { background: var(--ok); }
+  .lamp.on { opacity: 1; box-shadow: 0 0 16px currentColor; }
+  .lamp.r.on { color: var(--bad); } .lamp.y.on { color: var(--warn); } .lamp.g.on { color: var(--ok); }
+  .big { text-align: center; min-width: 0; }
+  #rCents { font-size: 96px; font-weight: 750; line-height: 1; font-variant-numeric: tabular-nums; }
+  #rVerdict { font-size: 26px; font-weight: 700; margin-top: 6px; letter-spacing: .02em; }
+  .ok { color: var(--ok); } .warn { color: var(--warn); } .bad { color: var(--bad); }
   .card { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 10px 12px; min-width: 0; }
   .card .k { font-size: 12px; color: var(--muted); }
   .card .v { font-size: 28px; font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -62,8 +72,9 @@
   .dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
   .msg { color: var(--bad); font-size: 13px; margin-top: 8px; min-height: 1em; }
   @media (max-width: 640px) {
-    .readout { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .card .v { font-size: 22px; }
+    .readout { gap: 16px; }
+    #rCents { font-size: 64px; } #rVerdict { font-size: 20px; }
+    .lamp { width: 26px; height: 26px; }
     canvas { height: 320px; }
   }
 </style>
@@ -104,10 +115,8 @@
   <div class="msg" id="msg"></div>
 
   <div class="readout">
-    <div class="card"><div class="k">Swara</div><div class="v" id="rSwara">–</div></div>
-    <div class="card"><div class="k">Pitch</div><div class="v" id="rHz">–</div></div>
-    <div class="card"><div class="k">Off by</div><div class="v" id="rCents">–</div></div>
-    <div class="card"><div class="k">Verdict</div><div class="v" id="rVerdict">–</div></div>
+    <div class="light" aria-hidden="true"><i class="lamp r" id="lR"></i><i class="lamp y" id="lY"></i><i class="lamp g" id="lG"></i></div>
+    <div class="big"><div id="rCents">–</div><div id="rVerdict">listening</div></div>
   </div>
 
   <div class="graphwrap"><canvas id="cv"></canvas></div>
@@ -115,8 +124,8 @@
   <div class="stats">
     <span class="legend">
       <span><i class="dot" style="background:var(--ok)"></i>in shruti</span>
-      <span><i class="dot" style="background:var(--warn)"></i>high or low</span>
-      <span><i class="dot" style="background:var(--bad)"></i>not in raga</span>
+      <span><i class="dot" style="background:var(--warn)"></i>a little off</span>
+      <span><i class="dot" style="background:var(--bad)"></i>way off or not in raga</span>
     </span>
     <span id="stats">No steady notes yet.</span>
     <button id="csv">Download results CSV</button>
@@ -549,18 +558,28 @@ function loop() {
 }
 
 function colorFor(r) {
-  if (!r.inRaga) return "--bad";
-  return r.verdict === "IN SHRUTHI" ? "--ok" : "--warn";
+  return "--" + lightFor(r);
+}
+
+// Traffic light: green inside the in-tune band, yellow up to twice it, red beyond (or outside the raga).
+function lightFor(r) {
+  const off = Math.abs(r.cents);
+  if (!r.inRaga || off > 2 * state.tol) return "bad";
+  return off <= state.tol ? "ok" : "warn";
 }
 
 function showReading(r) {
-  const set = (id, text, cls) => { const el = $(id); el.textContent = text; el.className = "v" + (cls ? " " + cls : ""); };
-  if (!r) { set("rSwara", "–"); set("rHz", "–"); set("rCents", "–"); set("rVerdict", "listening"); return; }
-  const cls = { "--ok": "ok", "--warn": "warn", "--bad": "bad" }[colorFor(r)];
-  set("rSwara", prettyName(r.name, r.octave), r.inRaga ? "" : "bad");
-  set("rHz", r.hz.toFixed(1) + " Hz");
-  set("rCents", (r.cents >= 0 ? "+" : "") + r.cents.toFixed(0) + "¢", cls);
-  set("rVerdict", r.inRaga ? (r.steady ? r.verdict : r.verdict.toLowerCase() + " (moving)") : "NOT IN RAGA", cls);
+  const c = $("rCents"), v = $("rVerdict");
+  const lamps = { bad: $("lR"), warn: $("lY"), ok: $("lG") };
+  for (const k in lamps) lamps[k].classList.remove("on");
+  if (!r) { c.textContent = "–"; c.className = ""; v.textContent = "listening"; v.className = ""; return; }
+  const cls = lightFor(r);
+  lamps[cls].classList.add("on");
+  const n = Math.round(r.cents);
+  c.textContent = (n > 0 ? "+" : "") + n + "¢";
+  c.className = cls;
+  v.textContent = !r.inRaga ? "NOT IN RAGA" : r.verdict === "IN SHRUTHI" ? "IN SHRUTI" : r.cents > 0 ? "TOO HIGH" : "TOO LOW";
+  v.className = cls;
 }
 
 function updateStats() {
