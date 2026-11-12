@@ -202,6 +202,7 @@
   .big .eyebrow { display: block; text-transform: uppercase; letter-spacing: .14em; font-size: .78rem; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
   #rCents { font-size: clamp(64px, 14vw, 112px); font-weight: 750; line-height: 1; font-variant-numeric: tabular-nums; color: var(--maroon); }
   #rVerdict { font-family: var(--font-head); font-size: clamp(20px, 4.4vw, 30px); margin-top: 8px; letter-spacing: .06em; color: var(--muted); }
+  #rCents:not(.ok):not(.warn):not(.bad) { color: var(--line); font-weight: 400; }
   #rCents.ok, #rVerdict.ok { color: var(--ok); }
   #rCents.warn, #rVerdict.warn { color: var(--warn); }
   #rCents.bad, #rVerdict.bad { color: var(--bad); }
