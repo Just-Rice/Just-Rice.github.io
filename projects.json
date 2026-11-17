@@ -212,7 +212,7 @@
       "image": "img/trading-lab.webp",
       "live": true,
       "added": "2026-09-26",
-      "updated": "2026-11-14T02:35:51Z"
+      "updated": "2026-11-17T04:41:37Z"
     },
     {
       "repo": "about-blank-lab",
@@ -312,6 +312,23 @@
       "auto_added": true,
       "added": "2026-10-31",
       "updated": "2026-11-04T18:43:44Z"
+    },
+    {
+      "repo": "media-downloader",
+      "name": "Media Downloader",
+      "kind": "Tool",
+      "category": "tools",
+      "color": "#0E7490",
+      "blurb": "Local Flask wrapper around yt-dlp for personal video/audio downloads",
+      "stack": [
+        "Python"
+      ],
+      "action": "Open",
+      "image": "img/media-downloader.webp",
+      "live": true,
+      "auto_added": true,
+      "added": "2026-11-17",
+      "updated": "2026-11-17T02:53:22Z"
     }
   ]
 }
