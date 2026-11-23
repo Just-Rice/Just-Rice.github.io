@@ -299,17 +299,18 @@
     {
       "repo": "physics-sim",
       "name": "Physics Sim",
-      "kind": "Tool",
-      "category": "tools",
+      "kind": "Game",
+      "category": "games",
       "color": "#C2410C",
-      "blurb": "A new project.",
+      "blurb": "An interactive physics sandbox: throw, stack and explode things, with rigid bodies, joints, cloth, soft bodies, water and orbital gravity. Switch on ray tracing for glass, reflections and soft shadows. 60+ models, 16 scenes and a model builder. Works on phones too.",
       "stack": [
+        "three.js",
+        "Ray tracing",
         "TypeScript"
       ],
-      "action": "Open",
+      "action": "Play",
       "image": "img/physics-sim.webp",
       "live": true,
-      "auto_added": true,
       "added": "2026-10-31",
       "updated": "2026-11-04T18:43:44Z"
     },
@@ -319,14 +320,13 @@
       "kind": "Tool",
       "category": "tools",
       "color": "#0E7490",
-      "blurb": "Local Flask wrapper around yt-dlp for personal video/audio downloads",
+      "blurb": "A local Flask wrapper around yt-dlp for personal video and audio downloads. Runs on your own computer, so there is no web version.",
       "stack": [
-        "Python"
+        "Python",
+        "Flask"
       ],
-      "action": "Open",
-      "image": "img/media-downloader.webp",
-      "live": true,
-      "auto_added": true,
+      "action": "Read",
+      "live": false,
       "added": "2026-11-17",
       "updated": "2026-11-17T02:53:22Z"
     }
