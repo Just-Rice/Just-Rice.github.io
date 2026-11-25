@@ -212,7 +212,7 @@
       "image": "img/trading-lab.webp",
       "live": true,
       "added": "2026-09-26",
-      "updated": "2026-11-24T06:15:22Z"
+      "updated": "2026-11-25T04:58:42Z"
     },
     {
       "repo": "about-blank-lab",
@@ -329,6 +329,23 @@
       "live": false,
       "added": "2026-11-17",
       "updated": "2026-11-17T02:53:22Z"
+    },
+    {
+      "repo": "roost",
+      "name": "Roost",
+      "kind": "Tool",
+      "category": "tools",
+      "color": "#9D4EDD",
+      "blurb": "Your Windows PC, from any browser: screen, sound, mouse and keyboard.",
+      "stack": [
+        "JavaScript"
+      ],
+      "action": "Open",
+      "image": "img/roost.webp",
+      "live": true,
+      "auto_added": true,
+      "added": "2026-11-23",
+      "updated": "2026-11-24T23:38:15Z"
     }
   ]
 }
